@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "67aa5f570e898451d0d7377d87706f15",
+    "revision": "9f2d6410dbf8db16a6c001d4b457aa22",
     "url": "/auto-drive-simulator-app/index.html"
   },
   {
-    "revision": "4918d20baaba4b2f4f18",
+    "revision": "63b0630d781d377413e3",
     "url": "/auto-drive-simulator-app/static/css/2.af3c1da9.chunk.css"
   },
   {
-    "revision": "4918d20baaba4b2f4f18",
-    "url": "/auto-drive-simulator-app/static/js/2.f47e2a9a.chunk.js"
+    "revision": "63b0630d781d377413e3",
+    "url": "/auto-drive-simulator-app/static/js/2.065b7f6b.chunk.js"
   },
   {
     "revision": "bab979f0996c4f83a712fc8810462bad",
-    "url": "/auto-drive-simulator-app/static/js/2.f47e2a9a.chunk.js.LICENSE.txt"
+    "url": "/auto-drive-simulator-app/static/js/2.065b7f6b.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "da90ebbc99a09b9cde66",
-    "url": "/auto-drive-simulator-app/static/js/main.aa877973.chunk.js"
+    "revision": "0496bbcfbb4c650e3aee",
+    "url": "/auto-drive-simulator-app/static/js/main.0d53ee59.chunk.js"
   },
   {
     "revision": "3b6bbd02cdd208675877",
