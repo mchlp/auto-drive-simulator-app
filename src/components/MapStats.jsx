@@ -25,37 +25,31 @@ export default function MapStats({ mapData, averageDataUpdatesPerSecond }) {
         lastUpdateTimeElapsedList.current.length;
     const averageUpdatesPerSecond = 1000 / averageUpdateTimeElapsed;
 
+    const statRowStyle = {};
+
     if (mapData) {
         Content = (
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flexWrap: 'wrap',
-                    height: '40pt',
-                }}
-            >
-                <div className="font-weight-bold mx-1">Map Data</div>
-                <div className="mx-1">Map ID: {mapData.id}</div>
-                <div className="mx-1">
+            <div>
+                <div style={statRowStyle}>Map ID: {mapData.id}</div>
+                <div style={statRowStyle}>
                     Total Vehicles: {Object.keys(mapData.vehicles).length}
                 </div>
-                <div className="mx-1">
+                <div style={statRowStyle}>
                     Total Intersections:{' '}
                     {Object.keys(mapData.intersections).length}
                 </div>
-                <div className="mx-1">
+                <div style={statRowStyle}>
                     Total Locations: {Object.keys(mapData.locations).length}
                 </div>
-                <div className="mx-1">
+                <div style={statRowStyle}>
                     Total Roads: {Object.keys(mapData.roads).length}
                 </div>
-                <div className="mx-1">
-                    Avg Canvas Updates/Sec: {averageUpdatesPerSecond.toFixed(2)}
-                </div>
-                <div className="mx-1">
-                    Avg Data Updates/Sec:{' '}
-                    {averageDataUpdatesPerSecond.toFixed(2)}
+                <div style={statRowStyle}>
+                    Avg Updates/Sec:{' '}
+                    {Math.min(
+                        averageDataUpdatesPerSecond,
+                        averageUpdatesPerSecond
+                    ).toFixed(2)}
                 </div>
             </div>
         );

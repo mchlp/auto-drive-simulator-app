@@ -2,7 +2,7 @@
     "name": "auto-drive-network-app",
     "version": "0.1.0",
     "private": true,
-    "homepage": "",
+    "homepage": "https://mchlp.github.io/auto-drive-simulator-app/",
     "dependencies": {
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.5.0",
@@ -10,6 +10,7 @@
         "bootstrap": "^4.5.0",
         "react": "^16.13.1",
         "react-dom": "^16.13.1",
+        "react-icons": "^3.10.0",
         "react-scripts": "3.4.1",
         "reactstrap": "^8.5.1",
         "short-uuid": "^3.1.1",
