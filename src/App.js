@@ -4,7 +4,11 @@ import io from 'socket.io-client';
 import MapViewer from './components/MapViewer';
 import constants from './constants';
 
-const socket = io('https://auto-drive-simulator-api.herokuapp.com/');
+let socketUrl = 'http://localhost:3001';
+if (process.env.NODE_ENV === 'production') {
+    socketUrl = 'https://auto-drive-simulator-api.herokuapp.com/';
+}
+const socket = io(socketUrl);
 
 function App() {
     const [mapData, setMapData] = useState(null);

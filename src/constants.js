@@ -1,1 +1,1 @@
-../../api/constants.js
+../../auto-drive-simulator-api/src/constants.js
