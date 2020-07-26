@@ -1,0 +1,17 @@
+{
+    "id": "map_8fzBXojVN4DkjwGhs3p3ks",
+    "locations": {},
+    "intersections": {
+        "intersection_0": { "id": "intersection_0", "coord": [0, 0] },
+        "intersection_1": { "id": "intersection_1", "coord": [0, 1000] }
+    },
+    "vehicles": {},
+    "roads": {
+        "road_0": {
+            "id": "road_0",
+            "type": "MAJOR",
+            "start": "intersection_0",
+            "end": "intersection_1"
+        }
+    }
+}
