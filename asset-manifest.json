@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.js": "/static/js/main.6f5a5d7e.chunk.js",
-    "main.js.map": "/static/js/main.6f5a5d7e.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.bb437d63.js",
-    "runtime-main.js.map": "/static/js/runtime-main.bb437d63.js.map",
-    "static/css/2.af3c1da9.chunk.css": "/static/css/2.af3c1da9.chunk.css",
-    "static/js/2.6f1b6eb3.chunk.js": "/static/js/2.6f1b6eb3.chunk.js",
-    "static/js/2.6f1b6eb3.chunk.js.map": "/static/js/2.6f1b6eb3.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.851fd4719037b4fecddebd4468e957b7.js": "/precache-manifest.851fd4719037b4fecddebd4468e957b7.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/2.af3c1da9.chunk.css.map": "/static/css/2.af3c1da9.chunk.css.map",
-    "static/js/2.6f1b6eb3.chunk.js.LICENSE.txt": "/static/js/2.6f1b6eb3.chunk.js.LICENSE.txt"
+    "main.js": "/auto-drive-simulator-app/static/js/main.aa877973.chunk.js",
+    "main.js.map": "/auto-drive-simulator-app/static/js/main.aa877973.chunk.js.map",
+    "runtime-main.js": "/auto-drive-simulator-app/static/js/runtime-main.efdf206c.js",
+    "runtime-main.js.map": "/auto-drive-simulator-app/static/js/runtime-main.efdf206c.js.map",
+    "static/css/2.af3c1da9.chunk.css": "/auto-drive-simulator-app/static/css/2.af3c1da9.chunk.css",
+    "static/js/2.f47e2a9a.chunk.js": "/auto-drive-simulator-app/static/js/2.f47e2a9a.chunk.js",
+    "static/js/2.f47e2a9a.chunk.js.map": "/auto-drive-simulator-app/static/js/2.f47e2a9a.chunk.js.map",
+    "index.html": "/auto-drive-simulator-app/index.html",
+    "precache-manifest.3aa2d4774d58a5c56ec1c66a27b309b3.js": "/auto-drive-simulator-app/precache-manifest.3aa2d4774d58a5c56ec1c66a27b309b3.js",
+    "service-worker.js": "/auto-drive-simulator-app/service-worker.js",
+    "static/css/2.af3c1da9.chunk.css.map": "/auto-drive-simulator-app/static/css/2.af3c1da9.chunk.css.map",
+    "static/js/2.f47e2a9a.chunk.js.LICENSE.txt": "/auto-drive-simulator-app/static/js/2.f47e2a9a.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.bb437d63.js",
+    "static/js/runtime-main.efdf206c.js",
     "static/css/2.af3c1da9.chunk.css",
-    "static/js/2.6f1b6eb3.chunk.js",
-    "static/js/main.6f5a5d7e.chunk.js"
+    "static/js/2.f47e2a9a.chunk.js",
+    "static/js/main.aa877973.chunk.js"
   ]
 }
