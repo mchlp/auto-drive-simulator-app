@@ -11,6 +11,10 @@ const INITIAL_STATE = {
         dynamic: true,
         static: true,
     },
+    showToggleDynamicLabels: true,
+    showLowFpsWarning: false,
+    shownLowFpsWarning: false,
+    curTripVehicle: null,
 };
 
 const rootReducer = (curState = INITIAL_STATE, action) => {
@@ -61,6 +65,32 @@ const rootReducer = (curState = INITIAL_STATE, action) => {
                     ...curState.showLabels,
                     static: action.payload,
                 },
+            };
+        }
+        case actionTypes.UPDATE_SHOW_TOGGLE_DYNAMIC_LABELS: {
+            return {
+                ...curState,
+                showToggleDynamicLabels: action.payload,
+            };
+        }
+        case actionTypes.UPDATE_SHOW_FPS_WARNING: {
+            if (action.payload && !curState.shownLowFpsWarning) {
+                return {
+                    ...curState,
+                    showLowFpsWarning: true,
+                    shownLowFpsWarning: true,
+                };
+            } else {
+                return {
+                    ...curState,
+                    showLowFpsWarning: false,
+                };
+            }
+        }
+        case actionTypes.UPDATE_CUR_TRIP_VEHICLE: {
+            return {
+                ...curState,
+                curTripVehicle: action.payload,
             };
         }
         default:

@@ -3,8 +3,17 @@ import MenuSection from './MenuSection';
 import SelectedDisplay from './SelectedDisplay';
 import NavigateSection from './NavigateSection';
 import MapStats from './MapStats';
+import { connect } from 'react-redux';
+import { actionCreators, reduxConstants } from '../redux/actions';
+import { Button } from 'reactstrap';
 
-function Menu({ socket }) {
+function Menu({
+    socket,
+    showToggleDynamicLabels,
+    curMode,
+    showDynamicLabels,
+    dispatch,
+}) {
     const startTrip = (startWaypointId, endWaypointId) => {
         if (socket) {
             socket.emit('start-trip', {
@@ -31,13 +40,13 @@ function Menu({ socket }) {
                 <SelectedDisplay />
             </MenuSection>
             <MenuSection sectionName="Start a Trip">
-                <NavigateSection startTrip={startTrip} />
+                <NavigateSection />
             </MenuSection>
             <MenuSection sectionName="Map Stats">
                 <MapStats />
             </MenuSection>
             <MenuSection sectionName="Menu Settings">
-                {showToggleDynamicLabelOption && (
+                {showToggleDynamicLabels && (
                     <div
                         style={{
                             display: 'flex',
@@ -53,15 +62,21 @@ function Menu({ socket }) {
                             className="mr-1"
                             checked={showDynamicLabels}
                             onChange={(event) => {
-                                setShowDynamicLabels(event.target.checked);
+                                dispatch(
+                                    actionCreators.setShowDynamicLabels(
+                                        event.target.checked
+                                    )
+                                );
                             }}
                         />
                         <label
                             htmlFor="show-labels-chkbox"
                             className="m-0"
                             onClick={(e) => {
-                                setShowDynamicLabels(
-                                    (prevShowLabels) => !prevShowLabels
+                                dispatch(
+                                    actionCreators.setShowDynamicLabels(
+                                        !showDynamicLabels
+                                    )
                                 );
                             }}
                             style={{
@@ -113,6 +128,9 @@ const mapStateToProps = (state) => {
     return {
         selectedComponent: state.selectedComponent,
         hoveredComponent: state.hoveredComponent,
+        showToggleDynamicLabels: state.showToggleDynamicLabels,
+        curMode: state.curMode,
+        showDynamicLabels: state.showLabels.dynamic,
     };
 };
 

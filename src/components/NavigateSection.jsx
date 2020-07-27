@@ -29,7 +29,7 @@ function NavigateSection({ locationList, startTrip, curTripVehicleId }) {
                 >
                     {locationList.map((location) => {
                         return (
-                            <option style={selectOptionStyle}>
+                            <option key={location.id} style={selectOptionStyle}>
                                 {location.id}
                             </option>
                         );
@@ -51,7 +51,7 @@ function NavigateSection({ locationList, startTrip, curTripVehicleId }) {
                 >
                     {locationList.map((location) => {
                         return (
-                            <option style={selectOptionStyle}>
+                            <option key={location.id} style={selectOptionStyle}>
                                 {location.id}
                             </option>
                         );
@@ -78,8 +78,7 @@ function NavigateSection({ locationList, startTrip, curTripVehicleId }) {
 }
 
 const mapStateToProps = (state) => ({
-    // locationList: state.mapData ? Object.values(state.mapData.locations) : [],
-    locationList: [],
+    locationList: state.mapData ? Object.values(state.mapData.locations) : [],
 });
 
 export default connect(mapStateToProps)(NavigateSection);

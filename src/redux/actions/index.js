@@ -11,6 +11,9 @@ const actionTypes = {
     UPDATE_HOVERED_COMPONENT: 'UPDATE_HOVERED_COMPONENT',
     UPDATE_SHOW_DYNAMIC_LABELS: 'UPDATE_SHOW_DYNAMIC_LABELS',
     UPDATE_SHOW_STATIC_LABELS: 'UPDATE_SHOW_STATIC_LABELS',
+    UPDATE_SHOW_TOGGLE_DYNAMIC_LABELS: 'UPDATE_SHOW_TOGGLE_DYNAMIC_LABELS',
+    UPDATE_SHOW_FPS_WARNING: 'UPDATE_SHOW_FPS_WARNING',
+    UPDATE_CUR_TRIP_VEHICLE: 'UPDATE_CUR_TRIP_VEHICLE',
 };
 
 const actionCreators = {};
@@ -43,6 +46,21 @@ actionCreators.setShowDynamicLabels = (showDynamicLabels) => ({
 actionCreators.setShowStaticLabels = (showStaticLabels) => ({
     type: actionTypes.UPDATE_SHOW_STATIC_LABELS,
     payload: showStaticLabels,
+});
+
+actionCreators.setShowToggleDynamicLabels = (showToggleDynamicLabels) => ({
+    type: actionTypes.UPDATE_SHOW_TOGGLE_DYNAMIC_LABELS,
+    payload: showToggleDynamicLabels,
+});
+
+actionCreators.setShowFpsWarning = (showFpsWarning) => ({
+    type: actionTypes.UPDATE_SHOW_FPS_WARNING,
+    payload: showFpsWarning,
+});
+
+actionCreators.setCurTripVehicle = (curTripVehicle) => ({
+    type: actionTypes.UPDATE_CUR_TRIP_VEHICLE,
+    payload: curTripVehicle,
 });
 
 export { actionCreators, reduxConstants, actionTypes };

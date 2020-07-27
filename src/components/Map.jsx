@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import MapRenderer from '../renderers/MapRenderer';
 import Utils from '../Utils';
-import {} from '../redux/actions';
+import { reduxConstants, actionCreators } from '../redux/actions';
 import { connect } from 'react-redux';
 
 const SHOW_LABEL_MIN_ZOOM_LEVEL = 0.4;
@@ -12,9 +12,9 @@ const SHOW_LABEL_MIN_ZOOM_LEVEL = 0.4;
 function Map({
     mapData,
     showDynamicLabels,
-    buildingMap,
+    curMode,
     showToggleDynamicLabelOption,
-    setShowToggleDynamicLabelOption,
+    dispatch,
 }) {
     const staticCanvasRef = useRef(null);
     const dynamicCanvasRef = useRef(null);
@@ -124,7 +124,7 @@ function Map({
 
     useEffect(() => {
         if (mapData && dynamicCanvasRef && dynamicCanvasRef.current) {
-            if (buildingMap) {
+            if (curMode === reduxConstants.APP_MODE_LIST.CREATE_MAP) {
                 const staticCanvasObj = staticCanvasRef.current;
                 const dynamicCanvasObj = dynamicCanvasRef.current;
                 const staticCtx = staticCanvasObj.getContext('2d');
@@ -247,11 +247,11 @@ function Map({
     useEffect(() => {
         if (canvasProps.zoom < SHOW_LABEL_MIN_ZOOM_LEVEL) {
             if (showToggleDynamicLabelOption) {
-                setShowToggleDynamicLabelOption(false);
+                dispatch(actionCreators.setShowToggleDynamicLabels(false));
             }
         } else {
             if (!showToggleDynamicLabelOption) {
-                setShowToggleDynamicLabelOption(true);
+                dispatch(actionCreators.setShowToggleDynamicLabels(true));
             }
         }
     }, [canvasProps.zoom]);
@@ -301,7 +301,10 @@ function Map({
 }
 
 const mapStateToProps = (state) => ({
+    curMode: state.curMode,
     mapData: state.mapData,
+    showDynamicLabels: state.showLabels.dynamic,
+    showToggleDynamicLabelOption: state.showToggleDynamicLabelOption,
 });
 
 export default connect(mapStateToProps)(Map);

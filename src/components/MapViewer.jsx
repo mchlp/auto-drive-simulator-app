@@ -27,22 +27,17 @@ function MapViewer({
     selectedComponent,
     hoveredComponent,
     dispatch,
+    showToggleDynamicLabelOption,
+    showDynamicLabels,
+    showLowFpsWarning,
 }) {
     const containerRef = useRef(null);
-    const [
-        showToggleDynamicLabelOption,
-        setShowToggleDynamicLabelOption,
-    ] = useState(true);
-    const [showLowFpsWarning, setShowLowFpsWarning] = useState(false);
-    const [shownLowFpsWarning, setShownLowFpsWarning] = useState(false);
-
-    const [curTripVehicleId, setCurTripVehicleId] = useState(null);    
 
     useEffect(() => {
         if (socket) {
             const startTripResListener = (startTripRes) => {
                 if (startTripRes) {
-                    setCurTripVehicleId(startTripRes.id);
+                    dispatch(actionCreators.setCurTripVehicle(startTripRes));
                     console.log(startTripRes);
                 }
             };
@@ -63,13 +58,8 @@ function MapViewer({
     };
 
     useEffect(() => {
-        if (
-            averageUpdatesPerSecond < 20 &&
-            showDynamicLabels &&
-            !shownLowFpsWarning
-        ) {
-            setShowLowFpsWarning(true);
-            setShownLowFpsWarning(true);
+        if (averageUpdatesPerSecond < 20 && showDynamicLabels) {
+            dispatch(actionCreators.setShowFpsWarning(true));
         }
     }, [averageUpdatesPerSecond, showDynamicLabels]);
 
@@ -117,11 +107,15 @@ function MapViewer({
 
     return (
         <div>
-            <LowFpsModal
-                isOpen={showLowFpsWarning}
-                setIsOpen={setShowLowFpsWarning}
-            />
-            <Menu socket={socket}/>
+            {showLowFpsWarning && (
+                <LowFpsModal
+                    isOpen={showLowFpsWarning}
+                    setIsOpen={(open) => {
+                        dispatch(actionCreators.setShowFpsWarning(open));
+                    }}
+                />
+            )}
+            <Menu socket={socket} />
             <div
                 onMouseMove={mouseMoveHandler}
                 onMouseDown={mouseDownHandler}
@@ -134,15 +128,7 @@ function MapViewer({
                         : 'move',
                 }}
             >
-                <Map
-                    showDynamicLabels={
-                        showDynamicLabels && showToggleDynamicLabelOption
-                    }
-                    showToggleDynamicLabelOption={showToggleDynamicLabelOption}
-                    setShowToggleDynamicLabelOption={
-                        setShowToggleDynamicLabelOption
-                    }
-                />
+                <Map />
             </div>
         </div>
     );
@@ -162,6 +148,8 @@ const mapStateToProps = (state) => {
         mapData: state.mapData,
         selectedComponent: state.selectedComponent,
         hoveredComponent: state.hoveredComponent,
+        showDynamicLabels: state.showLabels.dynamic,
+        showLowFpsWarning: state.showLowFpsWarning,
     };
 };
 
