@@ -1,30 +1,8 @@
-import React, { useRef } from 'react';
-import { useEffect } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 
-export default function MapStats({ mapData, averageDataUpdatesPerSecond }) {
-    const lastUpdateTimeElapsedList = useRef([]);
-    const lastUpdateTime = useRef(null);
-
-    useEffect(() => {
-        const now = Date.now();
-        let lastUpdateTimeElapsed = 0;
-        if (lastUpdateTime.current) {
-            lastUpdateTimeElapsed = now - lastUpdateTime.current;
-        }
-        lastUpdateTime.current = now;
-        lastUpdateTimeElapsedList.current.push(lastUpdateTimeElapsed);
-        if (lastUpdateTimeElapsedList.current.length > 100) {
-            lastUpdateTimeElapsedList.current.shift();
-        }
-    }, [mapData]);
-
+function MapStats({ mapData, averageUpdatesPerSecond }) {
     let Content;
-
-    const averageUpdateTimeElapsed =
-        lastUpdateTimeElapsedList.current.reduce((a, b) => a + b, 0) /
-        lastUpdateTimeElapsedList.current.length;
-    const averageUpdatesPerSecond = 1000 / averageUpdateTimeElapsed;
-
     const statRowStyle = {};
 
     if (mapData) {
@@ -45,11 +23,7 @@ export default function MapStats({ mapData, averageDataUpdatesPerSecond }) {
                     Total Roads: {Object.keys(mapData.roads).length}
                 </div>
                 <div style={statRowStyle}>
-                    Avg Updates/Sec:{' '}
-                    {Math.min(
-                        averageDataUpdatesPerSecond,
-                        averageUpdatesPerSecond
-                    ).toFixed(2)}
+                    Avg Updates/Sec: {averageUpdatesPerSecond.toFixed(2)}
                 </div>
             </div>
         );
@@ -67,3 +41,19 @@ export default function MapStats({ mapData, averageDataUpdatesPerSecond }) {
         </div>
     );
 }
+
+const mapStateToProps = (state) => {
+    const averageUpdateTimeElapsed =
+        state.lastUpdateTimeElapsedList.reduce((a, b) => a + b, 0) /
+        state.lastUpdateTimeElapsedList.length;
+    let averageUpdatesPerSecond = 1000 / averageUpdateTimeElapsed;
+    if (state.lastUpdateTimeElapsedList.length < 100) {
+        averageUpdatesPerSecond = Number.POSITIVE_INFINITY;
+    }
+    return {
+        averageUpdatesPerSecond,
+        mapData: state.mapData,
+    };
+};
+
+export default connect(mapStateToProps)(MapStats);

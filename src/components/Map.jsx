@@ -4,10 +4,12 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import MapRenderer from '../renderers/MapRenderer';
 import Utils from '../Utils';
+import {} from '../redux/actions';
+import { connect } from 'react-redux';
 
 const SHOW_LABEL_MIN_ZOOM_LEVEL = 0.4;
 
-export default function Map({
+function Map({
     mapData,
     showDynamicLabels,
     buildingMap,
@@ -80,16 +82,14 @@ export default function Map({
     }, [canvasContainerRef]);
 
     useEffect(() => {
-        if (staticCanvasRef && staticCanvasRef.current) {
-            Utils.initUtils(
-                canvasProps,
-                canvasWidth,
-                canvasHeight,
-                canvasContainerRef.current.offsetLeft,
-                canvasContainerRef.current.offsetTop
-            );
-        }
-    }, [canvasWidth, canvasHeight, canvasProps, staticCanvasRef]);
+        Utils.initUtils(
+            canvasProps,
+            canvasWidth,
+            canvasHeight,
+            canvasContainerRef.current.offsetLeft,
+            canvasContainerRef.current.offsetTop
+        );
+    }, [canvasWidth, canvasHeight, canvasProps]);
 
     useEffect(() => {
         if (
@@ -272,24 +272,36 @@ export default function Map({
                 zIndex: -1,
             }}
         >
-            <canvas
-                style={{
-                    position: 'absolute',
-                    zIndex: 2,
-                }}
-                ref={dynamicCanvasRef}
-                width={canvasWidth}
-                height={canvasHeight}
-            />
-            <canvas
-                style={{
-                    position: 'absolute',
-                    zIndex: 1,
-                }}
-                ref={staticCanvasRef}
-                width={canvasWidth}
-                height={canvasHeight}
-            />
+            {mapData ? (
+                <div>
+                    <canvas
+                        style={{
+                            position: 'absolute',
+                            zIndex: 2,
+                        }}
+                        ref={dynamicCanvasRef}
+                        width={canvasWidth}
+                        height={canvasHeight}
+                    />
+                    <canvas
+                        style={{
+                            position: 'absolute',
+                            zIndex: 1,
+                        }}
+                        ref={staticCanvasRef}
+                        width={canvasWidth}
+                        height={canvasHeight}
+                    />
+                </div>
+            ) : (
+                <div>Loading map data...</div>
+            )}
         </div>
     );
 }
+
+const mapStateToProps = (state) => ({
+    mapData: state.mapData,
+});
+
+export default connect(mapStateToProps)(Map);

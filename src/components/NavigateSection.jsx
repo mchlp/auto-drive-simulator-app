@@ -1,7 +1,9 @@
 import React from 'react';
 import { FormGroup, Label, Input, Button } from 'reactstrap';
+import { actionCreators } from '../redux/actions';
+import { connect } from 'react-redux';
 
-export default function NavigateSection({ mapData }) {
+function NavigateSection({ locationList, startTrip, curTripVehicleId }) {
     const selectOptionStyle = {
         fontSize: 10,
     };
@@ -25,7 +27,7 @@ export default function NavigateSection({ mapData }) {
                     name="select"
                     id="navigate-origin"
                 >
-                    {Object.values(mapData.locations).map((location) => {
+                    {locationList.map((location) => {
                         return (
                             <option style={selectOptionStyle}>
                                 {location.id}
@@ -47,7 +49,7 @@ export default function NavigateSection({ mapData }) {
                     name="select"
                     id="navigate-dest"
                 >
-                    {Object.values(mapData.locations).map((location) => {
+                    {locationList.map((location) => {
                         return (
                             <option style={selectOptionStyle}>
                                 {location.id}
@@ -62,9 +64,22 @@ export default function NavigateSection({ mapData }) {
                 style={{
                     fontSize: 10,
                 }}
+                onClick={() => {
+                    startTrip(
+                        document.getElementById('navigate-origin').value,
+                        document.getElementById('navigate-dest').value
+                    );
+                }}
             >
                 Navigate
             </Button>
         </div>
     );
 }
+
+const mapStateToProps = (state) => ({
+    // locationList: state.mapData ? Object.values(state.mapData.locations) : [],
+    locationList: [],
+});
+
+export default connect(mapStateToProps)(NavigateSection);

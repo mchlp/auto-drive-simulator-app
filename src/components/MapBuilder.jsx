@@ -4,6 +4,8 @@ import MapViewer from './MapViewer';
 import constants from '../constants';
 import Utils from '../Utils';
 import rawMapData from './test.json';
+import { actionCreators } from '../redux/actions';
+import { connect } from 'react-redux';
 
 const POINTER_TYPE = {
     INTERSECTION: 'intersection',
@@ -14,8 +16,10 @@ const POINTER_TYPE = {
     DELETE: 'delete',
 };
 
-export default function MapBuilder({ curState, setCurState }) {
-    const prevSavedMapData = useRef(JSON.parse(localStorage.getItem('saved-map-data')) || rawMapData);
+function MapBuilder() {
+    const prevSavedMapData = useRef(
+        JSON.parse(localStorage.getItem('saved-map-data')) || rawMapData
+    );
     const curPointerComponentId = useRef(null);
     const [roadStartWaypointId, setRoadStartWaypointId] = useState(null);
     const [roadType, setRoadType] = useState(null);
@@ -203,7 +207,7 @@ export default function MapBuilder({ curState, setCurState }) {
     if (curPointerType === POINTER_TYPE.ROAD && roadStartWaypointId) {
         cursorStyle = 'crosshair';
     } else if (curPointerType === POINTER_TYPE.DELETE) {
-        cursorStyle = 'no-drop'
+        cursorStyle = 'no-drop';
     }
 
     return (
@@ -309,12 +313,16 @@ export default function MapBuilder({ curState, setCurState }) {
                     curPointerRadius={curPointerRadius}
                     curPointerComponentId={curPointerComponentId.current}
                     cursorStyle={cursorStyle}
-                    averageDataUpdatesPerSecond={0}
-                    buildingMap={true}
-                    curState={curState}
-                    setCurState={setCurState}
                 />
             </div>
         </div>
     );
 }
+
+const mapStateToProps = (state) => {
+    return {
+        curState: state.curState,
+    };
+};
+
+export default connect(mapStateToProps)(MapBuilder);

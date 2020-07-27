@@ -10,31 +10,48 @@ import { Button } from 'reactstrap';
 import LowFpsModal from './LowFpsModal';
 import MenuSection from './MenuSection';
 import NavigateSection from './NavigateSection';
+import { actionCreators, reduxConstants } from '../redux/actions';
+import { connect } from 'react-redux';
+import Menu from './Menu';
 
-export default function MapViewer({
-    mapData,
-    onSelectComponentChange,
-    onHoverComponentChanged,
+function MapViewer({
     onMouseMove,
     onMouseDown,
     curPointerRadius,
     curPointerComponentId,
     cursorStyle,
-    averageDataUpdatesPerSecond,
-    buildingMap = false,
-    curState,
-    setCurState,
+    socket,
+    averageUpdatesPerSecond,
+    mapData,
+    curMode,
+    selectedComponent,
+    hoveredComponent,
+    dispatch,
 }) {
     const containerRef = useRef(null);
-    const [selectedComponent, setSelectedComponent] = useState(null);
-    const [hoveredComponent, setHoveredComponent] = useState(null);
-    const [showDynamicLabels, setShowDynamicLabels] = useState(true);
     const [
         showToggleDynamicLabelOption,
         setShowToggleDynamicLabelOption,
     ] = useState(true);
     const [showLowFpsWarning, setShowLowFpsWarning] = useState(false);
     const [shownLowFpsWarning, setShownLowFpsWarning] = useState(false);
+
+    const [curTripVehicleId, setCurTripVehicleId] = useState(null);    
+
+    useEffect(() => {
+        if (socket) {
+            const startTripResListener = (startTripRes) => {
+                if (startTripRes) {
+                    setCurTripVehicleId(startTripRes.id);
+                    console.log(startTripRes);
+                }
+            };
+            socket.on('start-trip-res', startTripResListener);
+            return () => {
+                socket.off('start-trip-res', startTripResListener);
+            };
+        }
+    }, [socket]);
 
     const getMapCoordinatesFromMouseEvent = (event) => {
         const { pageX, pageY } = event;
@@ -47,14 +64,14 @@ export default function MapViewer({
 
     useEffect(() => {
         if (
-            averageDataUpdatesPerSecond < 20 &&
+            averageUpdatesPerSecond < 20 &&
             showDynamicLabels &&
             !shownLowFpsWarning
         ) {
             setShowLowFpsWarning(true);
             setShownLowFpsWarning(true);
         }
-    }, [averageDataUpdatesPerSecond, showDynamicLabels]);
+    }, [averageUpdatesPerSecond, showDynamicLabels]);
 
     const mouseMoveHandler = (event) => {
         if (containerRef && containerRef.current && Utils.ready) {
@@ -74,10 +91,9 @@ export default function MapViewer({
                     ? curHoveredComponent.id
                     : curHoveredComponent)
             ) {
-                setHoveredComponent(curHoveredComponent);
-                if (onHoverComponentChanged) {
-                    onHoverComponentChanged(curHoveredComponent);
-                }
+                dispatch(
+                    actionCreators.setHoveredComponent(curHoveredComponent)
+                );
             }
         }
     };
@@ -90,11 +106,11 @@ export default function MapViewer({
                 onMouseDown(mapCoordinates);
             }
 
-            if (hoveredComponent && selectedComponent !== hoveredComponent) {
-                setSelectedComponent(hoveredComponent);
-                if (onSelectComponentChange) {
-                    onSelectComponentChange(hoveredComponent);
-                }
+            if (
+                hoveredComponent &&
+                selectedComponent.id !== hoveredComponent.id
+            ) {
+                dispatch(actionCreators.setSelectedComponent(hoveredComponent));
             }
         }
     };
@@ -105,101 +121,7 @@ export default function MapViewer({
                 isOpen={showLowFpsWarning}
                 setIsOpen={setShowLowFpsWarning}
             />
-            <div
-                style={{
-                    background: '#ffffffcc',
-                    margin: 10,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flexWrap: 'wrap',
-                    justifyContent: 'space-between',
-                    width: 300,
-                    position: 'fixed',
-                    borderRadius: 5,
-                }}
-            >
-                <MenuSection sectionName="Selected Component">
-                    <SelectedDisplay
-                        componentData={hoveredComponent || selectedComponent}
-                    />
-                </MenuSection>
-                <MenuSection sectionName="Navigate">
-                    <NavigateSection mapData={mapData} />
-                </MenuSection>
-                <MenuSection sectionName="Map Stats">
-                    <MapStats
-                        mapData={mapData}
-                        averageDataUpdatesPerSecond={
-                            averageDataUpdatesPerSecond
-                        }
-                    />
-                </MenuSection>
-                <MenuSection sectionName="Menu Settings">
-                    {showToggleDynamicLabelOption && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                alignContent: 'center',
-                            }}
-                            className="my-1"
-                        >
-                            <input
-                                type="checkbox"
-                                id="show-lables-chkbox"
-                                className="mr-1"
-                                checked={showDynamicLabels}
-                                onChange={(event) => {
-                                    setShowDynamicLabels(event.target.checked);
-                                }}
-                            />
-                            <label
-                                htmlFor="show-labels-chkbox"
-                                className="m-0"
-                                onClick={(e) => {
-                                    setShowDynamicLabels(
-                                        (prevShowLabels) => !prevShowLabels
-                                    );
-                                }}
-                                style={{
-                                    userSelect: 'none',
-                                    fontSize: 10,
-                                }}
-                            >
-                                Toggle Vehicle Labels
-                            </label>
-                        </div>
-                    )}
-                    <div>
-                        <Button
-                            color="link"
-                            style={{
-                                fontSize: 10,
-                                padding: 0,
-                            }}
-                            onClick={() => {
-                                if (
-                                    curState ===
-                                    constants.APP_STATE_LIST.CREATE_MAP
-                                ) {
-                                    setCurState(
-                                        constants.APP_STATE_LIST.VIEW_MAP
-                                    );
-                                } else {
-                                    setCurState(
-                                        constants.APP_STATE_LIST.CREATE_MAP
-                                    );
-                                }
-                            }}
-                        >
-                            {curState === constants.APP_STATE_LIST.CREATE_MAP
-                                ? 'Switch to View Mode'
-                                : 'Switch to Create Mode'}
-                        </Button>
-                    </div>
-                </MenuSection>
-            </div>
+            <Menu socket={socket}/>
             <div
                 onMouseMove={mouseMoveHandler}
                 onMouseDown={mouseDownHandler}
@@ -213,7 +135,6 @@ export default function MapViewer({
                 }}
             >
                 <Map
-                    mapData={mapData}
                     showDynamicLabels={
                         showDynamicLabels && showToggleDynamicLabelOption
                     }
@@ -221,9 +142,27 @@ export default function MapViewer({
                     setShowToggleDynamicLabelOption={
                         setShowToggleDynamicLabelOption
                     }
-                    buildingMap={buildingMap}
                 />
             </div>
         </div>
     );
 }
+
+const mapStateToProps = (state) => {
+    const averageUpdateTimeElapsed =
+        state.lastUpdateTimeElapsedList.reduce((a, b) => a + b, 0) /
+        state.lastUpdateTimeElapsedList.length;
+    let averageUpdatesPerSecond = 1000 / averageUpdateTimeElapsed;
+    if (state.lastUpdateTimeElapsedList.length < 100) {
+        averageUpdatesPerSecond = Number.POSITIVE_INFINITY;
+    }
+    return {
+        curMode: state.curMode,
+        averageUpdatesPerSecond,
+        mapData: state.mapData,
+        selectedComponent: state.selectedComponent,
+        hoveredComponent: state.hoveredComponent,
+    };
+};
+
+export default connect(mapStateToProps)(MapViewer);

@@ -1,6 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
-export default function SelectedDisplay({ componentData }) {
+function SelectedDisplay({ hoveredComponent, selectedComponent }) {
+    const componentData = hoveredComponent || selectedComponent;
     let Content;
     if (componentData) {
         Content = (
@@ -8,7 +10,8 @@ export default function SelectedDisplay({ componentData }) {
                 <div>Type: {componentData.type}</div>
                 <div>ID: {componentData.id}</div>
                 <div>
-                    Coord: [{componentData.data.coord[0].toFixed(3)}, {componentData.data.coord[1].toFixed(3)}]
+                    Coord: [{componentData.data.coord[0].toFixed(3)},{' '}
+                    {componentData.data.coord[1].toFixed(3)}]
                 </div>
             </div>
         );
@@ -26,3 +29,12 @@ export default function SelectedDisplay({ componentData }) {
         </div>
     );
 }
+
+const mapStateToProps = (state) => {
+    return {
+        selectedComponent: state.selectedComponent,
+        hoveredComponent: state.hoveredComponent,
+    };
+};
+
+export default connect(mapStateToProps)(SelectedDisplay);

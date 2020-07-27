@@ -44,6 +44,7 @@ export default function MenuSection({
                 </div>
             </div>
             {showChildren && <div>{children}</div>}
+            <hr className="mb-0" />
         </div>
     );
 }
