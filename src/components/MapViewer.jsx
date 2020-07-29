@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Map from './Map';
 import { useRef, useState } from 'react';
-import Utils from '../Utils';
+import Utils from '../utils/Utils';
 import SelectedDisplay from './SelectedDisplay';
 import constants from '../constants';
 import ComponentFinder from '../builder/ComponentFinder';

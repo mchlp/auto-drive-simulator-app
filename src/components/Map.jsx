@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import MapRenderer from '../renderers/MapRenderer';
-import Utils from '../Utils';
+import Utils from '../utils/Utils';
 import { reduxConstants, actionCreators } from '../redux/actions';
 import { connect } from 'react-redux';
 
@@ -100,37 +100,37 @@ function Map({
         );
     }, [canvasDimensions, canvasProps]);
 
-    useEffect(() => {
+    // useEffect(() => {
+    //     MapRenderer.renderAll(
+    //         staticCanvasRef.current,
+    //         dynamicCanvasRef.current,
+    //         showDynamicLabels,
+    //         true
+    //     );
+    // }, [
+    //     staticCanvasRef,
+    //     dynamicCanvasRef,
+    //     canvasProps,
+    //     canvasDimensions,
+    //     showDynamicLabels,
+    //     mapLoaded,
+    // ]);
+
+    const renderDynamicElements = () => {
+        console.log('render');
+        // if (curMode === reduxConstants.APP_MODE_LIST.CREATE_MAP) {
         MapRenderer.renderAll(
             staticCanvasRef.current,
             dynamicCanvasRef.current,
             showDynamicLabels,
             true
         );
-    }, [
-        staticCanvasRef,
-        dynamicCanvasRef,
-        canvasProps,
-        canvasDimensions,
-        showDynamicLabels,
-        mapLoaded,
-    ]);
-
-    const renderDynamicElements = () => {
-        console.log('render');
-        if (curMode === reduxConstants.APP_MODE_LIST.CREATE_MAP) {
-            MapRenderer.renderAll(
-                staticCanvasRef.current,
-                dynamicCanvasRef.current,
-                showDynamicLabels,
-                true
-            );
-        } else {
-            MapRenderer.renderDynamic(
-                dynamicCanvasRef.current,
-                showDynamicLabels
-            );
-        }
+        // } else {
+        //     MapRenderer.renderDynamic(
+        //         dynamicCanvasRef.current,
+        //         showDynamicLabels
+        //     );
+        // }
         window.requestAnimationFrame(renderDynamicElements);
     };
 
@@ -210,17 +210,11 @@ function Map({
                 y: zoomCenterInCanvasView.y - canvasDimensions.height / 2,
             };
 
-            const zoomCenterInCanvas = {
-                x: zoomOffsetFromViewCentre.x + canvasProps.centerX,
-                y: zoomOffsetFromViewCentre.y + canvasProps.centerY,
-            };
-
             dispatch(
-                actionCreators.setCanvasPropsDiff({
-                    centerX: -(zoomCenterInCanvas.x * (1 - curZoomFactor)),
-                    centerY: -(zoomCenterInCanvas.y * (1 - curZoomFactor)),
-                    zoom: curZoomFactor,
-                })
+                actionCreators.setCanvasPropsZoom(
+                    curZoomFactor,
+                    zoomOffsetFromViewCentre
+                )
             );
         }
         return false;

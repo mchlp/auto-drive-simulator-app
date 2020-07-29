@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button, Container, Input, Card, CardBody, Alert } from 'reactstrap';
 import MapViewer from './MapViewer';
 import constants from '../constants';
-import Utils from '../Utils';
+import Utils from '../utils/Utils';
 import rawMapData from './test.json';
 import { actionCreators } from '../redux/actions';
 import { connect } from 'react-redux';

@@ -1,4 +1,4 @@
-import Utils from '../Utils';
+import Utils from '../utils/Utils';
 import constants from '../constants';
 
 export default class RoadRenderer {

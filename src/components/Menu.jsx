@@ -43,7 +43,7 @@ function Menu({
                 {/* <NavigateSection /> */}
             </MenuSection>
             <MenuSection sectionName="Map Stats">
-                {/* <MapStats /> */}
+                <MapStats />
             </MenuSection>
             <MenuSection sectionName="Menu Settings">
                 {showToggleDynamicLabels && (

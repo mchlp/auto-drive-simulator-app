@@ -3,10 +3,15 @@ import LocationRenderer from './LocationRenderer';
 import IntersectionRenderer from './IntersectionRenderer';
 import VehicleRenderer from './VehicleRenderer';
 import { getStore } from '../redux/store';
+import MapDataHandler from '../utils/MapDataHandler';
 
 export default class MapRenderer {
+    static getMapData() {
+        return MapDataHandler.mapData;
+    }
+
     static renderStatic(staticCanvas, showLabels = true) {
-        const mapData = getStore().getState().mapData;
+        const mapData = this.getMapData();
         const {
             width: canvasWidth,
             height: canvasHeight,
@@ -30,7 +35,7 @@ export default class MapRenderer {
     }
 
     static renderDynamic(dynamicCanvas, showLabels = false) {
-        const mapData = getStore().getState().mapData;
+        const mapData = this.getMapData();
         const {
             width: canvasWidth,
             height: canvasHeight,

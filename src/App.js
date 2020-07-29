@@ -3,24 +3,22 @@ import MapBuilder from './components/MapBuilder';
 import MapViewer from './components/MapViewer';
 import { connect } from 'react-redux';
 import { actionCreators, actionTypes, reduxConstants } from './redux/actions';
+import MapDataHandler from './utils/MapDataHandler';
 
 function App({ socket, curMode, dispatch }) {
     useEffect(() => {
-        const updateMapDataListener = (data) => {
-            dispatch(actionCreators.setMapData(data));
-        };
-        socket.on('update-map-data', updateMapDataListener);
+        MapDataHandler.init(socket);
         return () => {
-            socket.off('update-map-data', updateMapDataListener);
+            MapDataHandler.cleanup(socket);
             socket.disconnect();
         };
-    }, []);   
+    }, []);
 
     let Content;
     if (curMode === reduxConstants.APP_MODE_LIST.VIEW_MAP) {
         Content = <MapViewer socket={socket} />;
     } else if (curMode === reduxConstants.APP_MODE_LIST.CREATE_MAP) {
-        Content = <MapBuilder/>;
+        Content = <MapBuilder />;
     }
 
     return <div className="App">{Content}</div>;

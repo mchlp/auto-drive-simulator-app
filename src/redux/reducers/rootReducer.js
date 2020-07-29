@@ -28,6 +28,26 @@ const INITIAL_STATE = {
 
 const rootReducer = (curState = INITIAL_STATE, action) => {
     switch (action.type) {
+        case actionTypes.UPDATE_CANVAS_PROPS_BY_ZOOM_FACTOR: {
+            const { zoomOffsetFromViewCentre, zoomFactor } = action.payload;
+            const zoomCenterInCanvas = {
+                x: zoomOffsetFromViewCentre.x + curState.canvasProps.centerX,
+                y: zoomOffsetFromViewCentre.y + curState.canvasProps.centerY,
+            };
+
+            return {
+                ...curState,
+                canvasProps: {
+                    centerX:
+                        curState.canvasProps.centerX -
+                        zoomCenterInCanvas.x * (1 - zoomFactor),
+                    centerY:
+                        curState.canvasProps.centerY -
+                        zoomCenterInCanvas.y * (1 - zoomFactor),
+                    zoom: curState.canvasProps.zoom * zoomFactor,
+                },
+            };
+        }
         case actionTypes.UPDATE_CANVAS_PROPS_BY_DIFF: {
             return {
                 ...curState,
