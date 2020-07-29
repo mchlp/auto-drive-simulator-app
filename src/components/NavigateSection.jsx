@@ -78,7 +78,8 @@ function NavigateSection({ locationList, startTrip, curTripVehicleId }) {
 }
 
 const mapStateToProps = (state) => ({
-    locationList: state.mapData ? Object.values(state.mapData.locations) : [],
+    locationList: [],
+    // locationList: state.mapData ? Object.values(state.mapData.locations) : [],
 });
 
 export default connect(mapStateToProps)(NavigateSection);

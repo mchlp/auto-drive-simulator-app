@@ -4,7 +4,7 @@ import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import io from 'socket.io-client';
 import { Provider } from 'react-redux';
-import configureStore from './redux/store';
+import { configureStore } from './redux/store';
 
 let socketUrl = 'http://localhost:3001';
 if (process.env.NODE_ENV === 'production') {

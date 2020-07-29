@@ -40,10 +40,10 @@ function Menu({
                 <SelectedDisplay />
             </MenuSection>
             <MenuSection sectionName="Start a Trip">
-                <NavigateSection />
+                {/* <NavigateSection /> */}
             </MenuSection>
             <MenuSection sectionName="Map Stats">
-                <MapStats />
+                {/* <MapStats /> */}
             </MenuSection>
             <MenuSection sectionName="Menu Settings">
                 {showToggleDynamicLabels && (

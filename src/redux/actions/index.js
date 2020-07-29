@@ -14,9 +14,27 @@ const actionTypes = {
     UPDATE_SHOW_TOGGLE_DYNAMIC_LABELS: 'UPDATE_SHOW_TOGGLE_DYNAMIC_LABELS',
     UPDATE_SHOW_FPS_WARNING: 'UPDATE_SHOW_FPS_WARNING',
     UPDATE_CUR_TRIP_VEHICLE: 'UPDATE_CUR_TRIP_VEHICLE',
+    UPDATE_CANVAS_DIMENSIONS: 'UPDATE_CANVAS_DIMENSIONS',
+    UPDATE_CANVAS_PROPS_BY_DIFF: 'UPDATE_CANVAS_PROPS_BY_DIFF',
+    UPDATE_CANVAS_PROPS: 'UPDATE_CANVAS_PROPS',
 };
 
 const actionCreators = {};
+
+actionCreators.setCanvasPropsDiff = (canvasPropsDiff) => ({
+    type: actionTypes.UPDATE_CANVAS_PROPS_BY_DIFF,
+    payload: canvasPropsDiff,
+});
+
+actionCreators.setCanvasProps = (canvasProps) => ({
+    type: actionTypes.UPDATE_CANVAS_PROPS,
+    payload: canvasProps,
+});
+
+actionCreators.setCanvasDimensions = (canvasDimensions) => ({
+    type: actionTypes.UPDATE_CANVAS_DIMENSIONS,
+    payload: canvasDimensions,
+});
 
 actionCreators.setMapData = (mapData) => ({
     type: actionTypes.UPDATE_MAP_DATA,

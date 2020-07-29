@@ -15,10 +15,52 @@ const INITIAL_STATE = {
     showLowFpsWarning: false,
     shownLowFpsWarning: false,
     curTripVehicle: null,
+    canvasDimensions: {
+        width: 0,
+        height: 0,
+    },
+    canvasProps: {
+        centerX: 0,
+        centerY: 0,
+        zoom: 0.5,
+    },
 };
 
 const rootReducer = (curState = INITIAL_STATE, action) => {
     switch (action.type) {
+        case actionTypes.UPDATE_CANVAS_PROPS_BY_DIFF: {
+            return {
+                ...curState,
+                canvasProps: {
+                    centerX: action.payload.centerX
+                        ? curState.canvasProps.centerX + action.payload.centerX
+                        : curState.canvasProps.centerX,
+                    centerY: action.payload.centerY
+                        ? curState.canvasProps.centerY + action.payload.centerY
+                        : curState.canvasProps.centerY,
+                    zoom: action.payload.zoom
+                        ? curState.canvasProps.zoom * action.payload.zoom
+                        : curState.canvasProps.zoom,
+                },
+            };
+        }
+        case actionTypes.UPDATE_CANVAS_PROPS: {
+            return {
+                ...curState,
+                canvasProps: {
+                    ...curState.canvasProps,
+                    ...action.payload,
+                },
+            };
+        }
+        case actionTypes.UPDATE_CANVAS_DIMENSIONS:
+            return {
+                ...curState,
+                canvasDimensions: {
+                    ...curState.canvasDimensions,
+                    ...action.payload,
+                },
+            };
         case actionTypes.UPDATE_CUR_MODE:
             return {
                 ...curState,

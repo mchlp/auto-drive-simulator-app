@@ -10,27 +10,33 @@ import { connect } from 'react-redux';
 const SHOW_LABEL_MIN_ZOOM_LEVEL = 0.4;
 
 function Map({
-    mapData,
     showDynamicLabels,
     curMode,
     showToggleDynamicLabelOption,
     dispatch,
+    canvasProps,
+    canvasDimensions,
+    mapLoaded,
 }) {
     const staticCanvasRef = useRef(null);
     const dynamicCanvasRef = useRef(null);
     const canvasContainerRef = useRef(null);
 
-    const [canvasWidth, setCanvasWidth] = useState(window.innerWidth);
-    const [canvasHeight, setCanvasHeight] = useState(window.innerHeight);
-    const [canvasProps, setCanvasProps] = useState({
-        centerX: 0,
-        centerY: 0,
-        zoom: 0.5,
-    });
-
     useEffect(() => {
-        setCanvasHeight(window.innerHeight);
-        setCanvasWidth(window.innerWidth);
+        console.log('rerender');
+        dispatch(
+            actionCreators.setCanvasDimensions({
+                height: window.innerHeight,
+                width: window.innerWidth,
+            })
+        );
+        dispatch(
+            actionCreators.setCanvasProps({
+                centerX: 0,
+                centerY: 0,
+                zoom: 0.5,
+            })
+        );
     }, []);
 
     const dragging = useRef(false);
@@ -42,25 +48,27 @@ function Map({
         let deltaY = 0;
         switch (eventKey) {
             case 'ArrowUp':
-                deltaY = -50;
-                break;
-            case 'ArrowDown':
                 deltaY = 50;
                 break;
-            case 'ArrowLeft':
-                deltaX = -50;
+            case 'ArrowDown':
+                deltaY = -50;
                 break;
-            case 'ArrowRight':
+            case 'ArrowLeft':
                 deltaX = 50;
                 break;
+            case 'ArrowRight':
+                deltaX = -50;
+                break;
+            default:
+                break;
         }
-        setCanvasProps((prevCanvasProps) => {
-            return {
-                centerX: prevCanvasProps.centerX + deltaX,
-                centerY: prevCanvasProps.centerY + deltaY,
-                zoom: prevCanvasProps.zoom,
-            };
-        });
+        dispatch(
+            actionCreators.setCanvasPropsDiff({
+                centerX: deltaX,
+                centerY: deltaY,
+                zoom: 1,
+            })
+        );
     };
 
     useEffect(() => {
@@ -72,89 +80,67 @@ function Map({
 
     useEffect(() => {
         if (canvasContainerRef.current) {
-            canvasContainerRef.current.addEventListener('wheel', onZoom, {
+            const curCanvasContainerRef = canvasContainerRef.current;
+            curCanvasContainerRef.addEventListener('wheel', onZoom, {
                 passive: false,
             });
             return () => {
-                canvasContainerRef.current.removeEventListener('wheel', onZoom);
+                curCanvasContainerRef.removeEventListener('wheel', onZoom);
             };
         }
-    }, [canvasContainerRef]);
+    }, [canvasContainerRef, mapLoaded]);
 
     useEffect(() => {
         Utils.initUtils(
             canvasProps,
-            canvasWidth,
-            canvasHeight,
+            canvasDimensions.width,
+            canvasDimensions.height,
             canvasContainerRef.current.offsetLeft,
             canvasContainerRef.current.offsetTop
         );
-    }, [canvasWidth, canvasHeight, canvasProps]);
+    }, [canvasDimensions, canvasProps]);
 
     useEffect(() => {
-        if (
-            mapData &&
-            staticCanvasRef &&
-            staticCanvasRef.current &&
-            dynamicCanvasRef &&
-            dynamicCanvasRef.current
-        ) {
-            const staticCanvasObj = staticCanvasRef.current;
-            const dynamicCanvasObj = dynamicCanvasRef.current;
-            const staticCtx = staticCanvasObj.getContext('2d');
-            const dynamicCtx = dynamicCanvasObj.getContext('2d');
-            MapRenderer.renderAll(
-                staticCtx,
-                dynamicCtx,
-                mapData,
-                canvasWidth,
-                canvasHeight,
-                showDynamicLabels,
-                true
-            );
-        }
+        MapRenderer.renderAll(
+            staticCanvasRef.current,
+            dynamicCanvasRef.current,
+            showDynamicLabels,
+            true
+        );
     }, [
         staticCanvasRef,
         dynamicCanvasRef,
         canvasProps,
-        canvasWidth,
-        canvasHeight,
+        canvasDimensions,
         showDynamicLabels,
+        mapLoaded,
     ]);
 
-    useEffect(() => {
-        if (mapData && dynamicCanvasRef && dynamicCanvasRef.current) {
-            if (curMode === reduxConstants.APP_MODE_LIST.CREATE_MAP) {
-                const staticCanvasObj = staticCanvasRef.current;
-                const dynamicCanvasObj = dynamicCanvasRef.current;
-                const staticCtx = staticCanvasObj.getContext('2d');
-                const dynamicCtx = dynamicCanvasObj.getContext('2d');
-                MapRenderer.renderAll(
-                    staticCtx,
-                    dynamicCtx,
-                    mapData,
-                    canvasWidth,
-                    canvasHeight,
-                    showDynamicLabels,
-                    true
-                );
-            } else {
-                const dynamicCanvasObj = dynamicCanvasRef.current;
-                const dynamicCtx = dynamicCanvasObj.getContext('2d');
-                MapRenderer.renderDynamic(
-                    dynamicCtx,
-                    mapData,
-                    canvasWidth,
-                    canvasHeight,
-                    showDynamicLabels
-                );
-            }
+    const renderDynamicElements = () => {
+        console.log('render');
+        if (curMode === reduxConstants.APP_MODE_LIST.CREATE_MAP) {
+            MapRenderer.renderAll(
+                staticCanvasRef.current,
+                dynamicCanvasRef.current,
+                showDynamicLabels,
+                true
+            );
+        } else {
+            MapRenderer.renderDynamic(
+                dynamicCanvasRef.current,
+                showDynamicLabels
+            );
         }
-    }, [dynamicCanvasRef, mapData]);
+        window.requestAnimationFrame(renderDynamicElements);
+    };
+
+    useEffect(() => {
+        window.requestAnimationFrame(renderDynamicElements);
+    }, []);
 
     const onDragStart = (event) => {
         event.preventDefault();
-        if (mapData) {
+        if (mapLoaded) {
             dragging.current = true;
             lastDragCoord.current = {
                 x: event.screenX,
@@ -187,11 +173,13 @@ function Map({
                 y: event.screenY,
             };
 
-            setCanvasProps((prevCanvasProps) => ({
-                ...prevCanvasProps,
-                centerX: prevCanvasProps.centerX - (curCoord.x - lastCoord.x),
-                centerY: prevCanvasProps.centerY - (curCoord.y - lastCoord.y),
-            }));
+            dispatch(
+                actionCreators.setCanvasPropsDiff({
+                    zoom: 1,
+                    centerX: -(curCoord.x - lastCoord.x),
+                    centerY: -(curCoord.y - lastCoord.y),
+                })
+            );
             lastDragCoord.current = curCoord;
         }
     };
@@ -199,7 +187,7 @@ function Map({
     const onZoom = (event) => {
         event.preventDefault();
         event.stopPropagation();
-        if (mapData) {
+        if (mapLoaded) {
             const { pageX, pageY, deltaY } = event;
 
             const ZOOM_FACTOR = 1.25;
@@ -212,34 +200,28 @@ function Map({
                 curZoomFactor = ZOOM_FACTOR;
             }
 
-            setCanvasProps((prevCanvasProps) => {
-                const zoomCenterInCanvasView = {
-                    x: pageX - staticCanvasRef.current.offsetLeft,
-                    y: pageY - staticCanvasRef.current.offsetTop,
-                };
+            const zoomCenterInCanvasView = {
+                x: pageX - staticCanvasRef.current.offsetLeft,
+                y: pageY - staticCanvasRef.current.offsetTop,
+            };
 
-                const zoomOffsetFromViewCentre = {
-                    x: zoomCenterInCanvasView.x - canvasWidth / 2,
-                    y: zoomCenterInCanvasView.y - canvasHeight / 2,
-                };
+            const zoomOffsetFromViewCentre = {
+                x: zoomCenterInCanvasView.x - canvasDimensions.width / 2,
+                y: zoomCenterInCanvasView.y - canvasDimensions.height / 2,
+            };
 
-                const zoomCenterInCanvas = {
-                    x: zoomOffsetFromViewCentre.x + prevCanvasProps.centerX,
-                    y: zoomOffsetFromViewCentre.y + prevCanvasProps.centerY,
-                };
+            const zoomCenterInCanvas = {
+                x: zoomOffsetFromViewCentre.x + canvasProps.centerX,
+                y: zoomOffsetFromViewCentre.y + canvasProps.centerY,
+            };
 
-                const newZoom = prevCanvasProps.zoom * curZoomFactor;
-
-                return {
-                    centerX:
-                        prevCanvasProps.centerX -
-                        zoomCenterInCanvas.x * (1 - curZoomFactor),
-                    centerY:
-                        prevCanvasProps.centerY -
-                        zoomCenterInCanvas.y * (1 - curZoomFactor),
-                    zoom: newZoom,
-                };
-            });
+            dispatch(
+                actionCreators.setCanvasPropsDiff({
+                    centerX: -(zoomCenterInCanvas.x * (1 - curZoomFactor)),
+                    centerY: -(zoomCenterInCanvas.y * (1 - curZoomFactor)),
+                    zoom: curZoomFactor,
+                })
+            );
         }
         return false;
     };
@@ -264,15 +246,15 @@ function Map({
             onMouseMove={onDragMove}
             ref={canvasContainerRef}
             style={{
-                height: canvasHeight,
-                width: canvasWidth,
+                height: canvasDimensions.height,
+                width: canvasDimensions.width,
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 zIndex: -1,
             }}
         >
-            {mapData ? (
+            {mapLoaded ? (
                 <div>
                     <canvas
                         style={{
@@ -280,8 +262,8 @@ function Map({
                             zIndex: 2,
                         }}
                         ref={dynamicCanvasRef}
-                        width={canvasWidth}
-                        height={canvasHeight}
+                        height={canvasDimensions.height}
+                        width={canvasDimensions.width}
                     />
                     <canvas
                         style={{
@@ -289,8 +271,8 @@ function Map({
                             zIndex: 1,
                         }}
                         ref={staticCanvasRef}
-                        width={canvasWidth}
-                        height={canvasHeight}
+                        height={canvasDimensions.height}
+                        width={canvasDimensions.width}
                     />
                 </div>
             ) : (
@@ -302,9 +284,11 @@ function Map({
 
 const mapStateToProps = (state) => ({
     curMode: state.curMode,
-    mapData: state.mapData,
+    mapLoaded: !!state.mapData,
     showDynamicLabels: state.showLabels.dynamic,
     showToggleDynamicLabelOption: state.showToggleDynamicLabelOption,
+    canvasProps: state.canvasProps,
+    canvasDimensions: state.canvasDimensions,
 });
 
 export default connect(mapStateToProps)(Map);

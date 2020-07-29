@@ -64,7 +64,7 @@ function MapViewer({
     }, [averageUpdatesPerSecond, showDynamicLabels]);
 
     const mouseMoveHandler = (event) => {
-        if (containerRef && containerRef.current && Utils.ready) {
+        if (mapData && containerRef && containerRef.current && Utils.ready) {
             const mapCoordinates = getMapCoordinatesFromMouseEvent(event);
             if (onMouseMove) {
                 onMouseMove(mapCoordinates);
@@ -97,8 +97,9 @@ function MapViewer({
             }
 
             if (
-                hoveredComponent &&
-                selectedComponent.id !== hoveredComponent.id
+                !selectedComponent ||
+                (hoveredComponent &&
+                    selectedComponent.id !== hoveredComponent.id)
             ) {
                 dispatch(actionCreators.setSelectedComponent(hoveredComponent));
             }
