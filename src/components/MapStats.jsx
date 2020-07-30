@@ -1,11 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import MapDataHandler from '../utils/MapDataHandler';
 
-function MapStats({ mapData, averageUpdatesPerSecond }) {
+function MapStats({
+    mapDataLoaded,
+    averageUpdatesPerSecond,
+    averageRendersPerSecond,
+}) {
     let Content;
     const statRowStyle = {};
 
-    if (mapData) {
+    if (mapDataLoaded) {
+        const mapData = MapDataHandler.mapData;
+        console.log(mapData);
         Content = (
             <div>
                 <div style={statRowStyle}>Map ID: {mapData.id}</div>
@@ -25,6 +32,9 @@ function MapStats({ mapData, averageUpdatesPerSecond }) {
                 <div style={statRowStyle}>
                     Avg Updates/Sec: {averageUpdatesPerSecond.toFixed(2)}
                 </div>
+                <div style={statRowStyle}>
+                    Avg Renders/Sec: {averageRendersPerSecond.toFixed(2)}
+                </div>
             </div>
         );
     } else {
@@ -43,16 +53,10 @@ function MapStats({ mapData, averageUpdatesPerSecond }) {
 }
 
 const mapStateToProps = (state) => {
-    const averageUpdateTimeElapsed =
-        state.lastUpdateTimeElapsedList.reduce((a, b) => a + b, 0) /
-        state.lastUpdateTimeElapsedList.length;
-    let averageUpdatesPerSecond = 1000 / averageUpdateTimeElapsed;
-    if (state.lastUpdateTimeElapsedList.length < 100) {
-        averageUpdatesPerSecond = Number.POSITIVE_INFINITY;
-    }
     return {
-        averageUpdatesPerSecond,
-        mapData: state.mapData,
+        averageUpdatesPerSecond: state.averageUpdatesPerSecond,
+        averageRendersPerSecond: state.averageRendersPerSecond,
+        mapDataLoaded: state.mapDataLoaded,
     };
 };
 

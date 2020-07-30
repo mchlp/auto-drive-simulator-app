@@ -132,9 +132,9 @@ function MapBuilder() {
         }
     };
 
-    const lastSavedTime = useRef(Date.now());
+    const lastSavedTime = useRef(performance.now());
     useEffect(() => {
-        const now = Date.now();
+        const now = performance.now();
         if (now - lastSavedTime.current > 5000) {
             localStorage.setItem('saved-map-data', getSerializedMap());
             lastSavedTime.current = now;

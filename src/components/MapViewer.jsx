@@ -22,7 +22,6 @@ function MapViewer({
     cursorStyle,
     socket,
     averageUpdatesPerSecond,
-    mapData,
     curMode,
     selectedComponent,
     hoveredComponent,
@@ -30,6 +29,7 @@ function MapViewer({
     showToggleDynamicLabelOption,
     showDynamicLabels,
     showLowFpsWarning,
+    mapDataLoaded,
 }) {
     const containerRef = useRef(null);
 
@@ -64,14 +64,18 @@ function MapViewer({
     }, [averageUpdatesPerSecond, showDynamicLabels]);
 
     const mouseMoveHandler = (event) => {
-        if (mapData && containerRef && containerRef.current && Utils.ready) {
+        if (
+            mapDataLoaded &&
+            containerRef &&
+            containerRef.current &&
+            Utils.ready
+        ) {
             const mapCoordinates = getMapCoordinatesFromMouseEvent(event);
             if (onMouseMove) {
                 onMouseMove(mapCoordinates);
             }
             const curHoveredComponent = ComponentFinder.findComponent(
                 mapCoordinates,
-                mapData,
                 curPointerRadius,
                 [curPointerComponentId]
             );
@@ -136,17 +140,10 @@ function MapViewer({
 }
 
 const mapStateToProps = (state) => {
-    const averageUpdateTimeElapsed =
-        state.lastUpdateTimeElapsedList.reduce((a, b) => a + b, 0) /
-        state.lastUpdateTimeElapsedList.length;
-    let averageUpdatesPerSecond = 1000 / averageUpdateTimeElapsed;
-    if (state.lastUpdateTimeElapsedList.length < 100) {
-        averageUpdatesPerSecond = Number.POSITIVE_INFINITY;
-    }
     return {
         curMode: state.curMode,
-        averageUpdatesPerSecond,
-        mapData: state.mapData,
+        mapDataLoaded: state.mapDataLoaded,
+        averageUpdatesPerSecond: state.averageUpdatesPerSecond,
         selectedComponent: state.selectedComponent,
         hoveredComponent: state.hoveredComponent,
         showDynamicLabels: state.showLabels.dynamic,

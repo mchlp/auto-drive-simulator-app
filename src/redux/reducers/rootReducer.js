@@ -1,10 +1,10 @@
 import { reduxConstants, actionTypes } from '../actions';
 
 const INITIAL_STATE = {
-    mapData: null,
+    mapDataLoaded: false,
+    averageUpdatesPerSecond: Number.POSITIVE_INFINITY,
+    averageRendersPerSecond: Number.POSITIVE_INFINITY,
     curMode: reduxConstants.APP_MODE_LIST.VIEW_MAP,
-    lastUpdateTimeElapsedList: [],
-    lastUpdateTime: Date.now(),
     selectedComponent: null,
     hoveredComponent: null,
     showLabels: {
@@ -28,6 +28,24 @@ const INITIAL_STATE = {
 
 const rootReducer = (curState = INITIAL_STATE, action) => {
     switch (action.type) {
+        case actionTypes.UPDATE_AVERAGE_RENDERS_PER_SECOND: {
+            return {
+                ...curState,
+                averageRendersPerSecond: action.payload,
+            };
+        }
+        case actionTypes.UPDATE_AVERAGE_UPDATES_PER_SECOND: {
+            return {
+                ...curState,
+                averageUpdatesPerSecond: action.payload,
+            };
+        }
+        case actionTypes.UPDATE_MAP_DATA_LOADED: {
+            return {
+                ...curState,
+                mapDataLoaded: action.payload,
+            };
+        }
         case actionTypes.UPDATE_CANVAS_PROPS_BY_ZOOM_FACTOR: {
             const { zoomOffsetFromViewCentre, zoomFactor } = action.payload;
             const zoomCenterInCanvas = {
@@ -85,22 +103,6 @@ const rootReducer = (curState = INITIAL_STATE, action) => {
             return {
                 ...curState,
                 curMode: action.payload,
-            };
-        case actionTypes.UPDATE_MAP_DATA:
-            const newLastUpdateTimeElapsedList = [
-                ...curState.lastUpdateTimeElapsedList,
-            ];
-            const now = Date.now();
-            const lastUpdateTimeElapsed = now - curState.lastUpdateTime;
-            newLastUpdateTimeElapsedList.push(lastUpdateTimeElapsed);
-            if (newLastUpdateTimeElapsedList.length > 100) {
-                newLastUpdateTimeElapsedList.shift();
-            }
-            return {
-                ...curState,
-                mapData: action.payload,
-                lastUpdateTime: now,
-                lastUpdateTimeElapsedList: newLastUpdateTimeElapsedList,
             };
         case actionTypes.UPDATE_SELECTED_COMPONENT:
             return {

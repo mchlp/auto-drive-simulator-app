@@ -10,9 +10,7 @@ import { connect } from 'react-redux';
 const SHOW_LABEL_MIN_ZOOM_LEVEL = 0.4;
 
 function Map({
-    showDynamicLabels,
-    curMode,
-    showToggleDynamicLabelOption,
+    showToggleDynamicLabels,
     dispatch,
     canvasProps,
     canvasDimensions,
@@ -23,7 +21,6 @@ function Map({
     const canvasContainerRef = useRef(null);
 
     useEffect(() => {
-        console.log('rerender');
         dispatch(
             actionCreators.setCanvasDimensions({
                 height: window.innerHeight,
@@ -100,42 +97,16 @@ function Map({
         );
     }, [canvasDimensions, canvasProps]);
 
-    // useEffect(() => {
-    //     MapRenderer.renderAll(
-    //         staticCanvasRef.current,
-    //         dynamicCanvasRef.current,
-    //         showDynamicLabels,
-    //         true
-    //     );
-    // }, [
-    //     staticCanvasRef,
-    //     dynamicCanvasRef,
-    //     canvasProps,
-    //     canvasDimensions,
-    //     showDynamicLabels,
-    //     mapLoaded,
-    // ]);
-
-    const renderDynamicElements = () => {
-        console.log('render');
-        // if (curMode === reduxConstants.APP_MODE_LIST.CREATE_MAP) {
-        MapRenderer.renderAll(
-            staticCanvasRef.current,
-            dynamicCanvasRef.current,
-            showDynamicLabels,
-            true
-        );
-        // } else {
-        //     MapRenderer.renderDynamic(
-        //         dynamicCanvasRef.current,
-        //         showDynamicLabels
-        //     );
-        // }
-        window.requestAnimationFrame(renderDynamicElements);
-    };
-
     useEffect(() => {
-        window.requestAnimationFrame(renderDynamicElements);
+        const renderMap = () => {
+            MapRenderer.renderAll(
+                staticCanvasRef.current,
+                dynamicCanvasRef.current
+            );
+            window.requestAnimationFrame(renderMap);
+        };
+
+        window.requestAnimationFrame(renderMap);
     }, []);
 
     const onDragStart = (event) => {
@@ -157,7 +128,7 @@ function Map({
     const lastDragEvent = useRef(null);
     const onDragMove = (event) => {
         const DRAG_UPDATE_LIMIT_MS = 1000 / 30;
-        const now = Date.now();
+        const now = performance.now();
         if (
             dragging.current &&
             (!lastDragEvent.current ||
@@ -221,16 +192,18 @@ function Map({
     };
 
     useEffect(() => {
+        console.log(canvasProps.zoom);
+        console.log(showToggleDynamicLabels);
         if (canvasProps.zoom < SHOW_LABEL_MIN_ZOOM_LEVEL) {
-            if (showToggleDynamicLabelOption) {
+            if (showToggleDynamicLabels) {
                 dispatch(actionCreators.setShowToggleDynamicLabels(false));
             }
         } else {
-            if (!showToggleDynamicLabelOption) {
+            if (!showToggleDynamicLabels) {
                 dispatch(actionCreators.setShowToggleDynamicLabels(true));
             }
         }
-    }, [canvasProps.zoom]);
+    }, [canvasProps.zoom, showToggleDynamicLabels, dispatch]);
 
     return (
         <div
@@ -278,9 +251,9 @@ function Map({
 
 const mapStateToProps = (state) => ({
     curMode: state.curMode,
-    mapLoaded: !!state.mapData,
+    mapLoaded: state.mapDataLoaded,
     showDynamicLabels: state.showLabels.dynamic,
-    showToggleDynamicLabelOption: state.showToggleDynamicLabelOption,
+    showToggleDynamicLabels: state.showToggleDynamicLabels,
     canvasProps: state.canvasProps,
     canvasDimensions: state.canvasDimensions,
 });

@@ -5,7 +5,9 @@ reduxConstants.APP_MODE_LIST = {
 };
 
 const actionTypes = {
-    UPDATE_MAP_DATA: 'UPDATE_MAP_DATA',
+    UPDATE_MAP_DATA_LOADED: 'UPDATE_MAP_DATA_LOADED',
+    UPDATE_AVERAGE_RENDERS_PER_SECOND: 'UPDATE_AVERAGE_RENDERS_PER_SECOND',
+    UPDATE_AVERAGE_UPDATES_PER_SECOND: 'UPDATE_AVERAGE_UPDATES_PER_SECOND',
     UPDATE_CUR_MODE: 'UPDATE_CUR_MODE',
     UPDATE_SELECTED_COMPONENT: 'UPDATE_SELECTED_COMPONENT',
     UPDATE_HOVERED_COMPONENT: 'UPDATE_HOVERED_COMPONENT',
@@ -40,11 +42,6 @@ actionCreators.setCanvasProps = (canvasProps) => ({
 actionCreators.setCanvasDimensions = (canvasDimensions) => ({
     type: actionTypes.UPDATE_CANVAS_DIMENSIONS,
     payload: canvasDimensions,
-});
-
-actionCreators.setMapData = (mapData) => ({
-    type: actionTypes.UPDATE_MAP_DATA,
-    payload: mapData,
 });
 
 actionCreators.setCurMode = (curMode) => ({
@@ -85,6 +82,21 @@ actionCreators.setShowFpsWarning = (showFpsWarning) => ({
 actionCreators.setCurTripVehicle = (curTripVehicle) => ({
     type: actionTypes.UPDATE_CUR_TRIP_VEHICLE,
     payload: curTripVehicle,
+});
+
+actionCreators.setMapDataLoaded = (mapDataLoaded) => ({
+    type: actionTypes.UPDATE_MAP_DATA_LOADED,
+    payload: mapDataLoaded,
+});
+
+actionCreators.setAverageUpdatesPerSecond = (avgUpdatesPerSecond) => ({
+    type: actionTypes.UPDATE_AVERAGE_UPDATES_PER_SECOND,
+    payload: avgUpdatesPerSecond,
+});
+
+actionCreators.setAverageRendersPerSecond = (avgRendersPerSecond) => ({
+    type: actionTypes.UPDATE_AVERAGE_RENDERS_PER_SECOND,
+    payload: avgRendersPerSecond,
 });
 
 export { actionCreators, reduxConstants, actionTypes };

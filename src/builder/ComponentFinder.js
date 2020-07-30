@@ -1,14 +1,10 @@
 import Utils from '../utils/Utils';
 import constants from '../constants';
+import MapDataHandler from '../utils/MapDataHandler';
 
 const ComponetFinder = {};
 
-const intersectionFinder = (
-    mapCoordinates,
-    mapData,
-    pointerRadius,
-    excludeIdList
-) => {
+const intersectionFinder = (mapCoordinates, mapData, pointerRadius, excludeIdList) => {
     for (const intersectionEntry of Object.entries(mapData.intersections)) {
         if (!excludeIdList.includes(intersectionEntry[0])) {
             const intersectionData = intersectionEntry[1];
@@ -32,12 +28,7 @@ const intersectionFinder = (
     return null;
 };
 
-const locationFinder = (
-    mapCoordinates,
-    mapData,
-    pointerRadius,
-    excludeIdList
-) => {
+const locationFinder = (mapCoordinates, mapData, pointerRadius, excludeIdList) => {
     for (const locationEntry of Object.entries(mapData.locations)) {
         if (!excludeIdList.includes(locationEntry[0])) {
             const locationData = locationEntry[1];
@@ -60,10 +51,10 @@ const locationFinder = (
 
 ComponetFinder.findComponent = (
     mapCoordinates,
-    mapData,
     pointerRadius = 0,
     excludeIdList = []
 ) => {
+    const mapData = MapDataHandler.mapData;
     const finderFuncs = [intersectionFinder, locationFinder];
     for (const func of finderFuncs) {
         const component = func(
