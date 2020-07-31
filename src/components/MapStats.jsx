@@ -12,7 +12,6 @@ function MapStats({
 
     if (mapDataLoaded) {
         const mapData = MapDataHandler.mapData;
-        console.log(mapData);
         Content = (
             <div>
                 <div style={statRowStyle}>Map ID: {mapData.id}</div>

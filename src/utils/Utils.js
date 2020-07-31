@@ -1,15 +1,36 @@
 import shortUuid from 'short-uuid';
+import { getStore } from '../redux/store';
 export default class Utils {
-    static canvasProps;
-    static canvasWidth;
-    static canvasHeight;
-    static canvasOffsetLeft;
-    static canvasOffsetTop;
-    static ready = false;
     static shortUuidGenerator = shortUuid(shortUuid.constants.flickrBase58);
 
     static generateShortUuid() {
         return this.shortUuidGenerator.generate();
+    }
+
+    static getCanvasViewCutoffs() {
+        const { canvasDimensions } = getStore().getState();
+        const cutoffs = {
+            left: 50,
+            right: canvasDimensions.width - 50,
+            top: 50,
+            bottom: canvasDimensions.height - 50,
+        };
+        console.log(cutoffs);
+        return cutoffs;
+    }
+
+    static checkCoordinateInCanvasView(canvasCoordinateArray, radius = 0) {
+        // console.log(canvasCoordinateArray);
+        const canvasCutoffs = this.getCanvasViewCutoffs();
+        const withinLeft =
+            canvasCoordinateArray[0] + radius / 2 >= canvasCutoffs.left;
+        const withinRight =
+            canvasCoordinateArray[0] - radius / 2 <= canvasCutoffs.right;
+        const withinTop =
+            canvasCoordinateArray[1] + radius / 2 >= canvasCutoffs.top;
+        const withinBottom =
+            canvasCoordinateArray[1] - radius / 2 <= canvasCutoffs.bottom;
+        return withinLeft && withinRight && withinTop && withinBottom;
     }
 
     static getCoordFromWaypoint(waypointName, mapData) {
@@ -29,21 +50,6 @@ export default class Utils {
         return Math.sqrt(squareSum);
     }
 
-    static initUtils(
-        canvasProps,
-        canvasWidth,
-        canvasHeight,
-        canvasOffsetLeft,
-        canvasOffsetTop
-    ) {
-        Utils.canvasProps = canvasProps;
-        Utils.canvasWidth = canvasWidth;
-        Utils.canvasHeight = canvasHeight;
-        Utils.canvasOffsetLeft = canvasOffsetLeft;
-        Utils.canvasOffsetTop = canvasOffsetTop;
-        Utils.ready = true;
-    }
-
     static mapArrayCoord(arrayCoord) {
         if (arrayCoord) {
             return arrayCoord.map(Utils.mapSingleCoord);
@@ -59,29 +65,33 @@ export default class Utils {
     }
 
     static scaleSingleCoord(singleCoord) {
-        return singleCoord * Utils.canvasProps.zoom;
+        const canvasProps = getStore().getState().canvasProps;
+        return singleCoord * canvasProps.zoom;
     }
 
     static unscaleSingleCoord(singleCoord) {
-        return singleCoord / Utils.canvasProps.zoom;
+        const canvasProps = getStore().getState().canvasProps;
+        return singleCoord / canvasProps.zoom;
     }
 
     static mapSingleCoord(singleCoord, index) {
         let scaledCoord = Utils.scaleSingleCoord(singleCoord);
+        const { canvasDimensions, canvasProps } = getStore().getState();
         if (index === 0) {
-            scaledCoord += Utils.canvasWidth / 2 - Utils.canvasProps.centerX;
+            scaledCoord += canvasDimensions.width / 2 - canvasProps.centerX;
         } else if (index === 1) {
-            scaledCoord += Utils.canvasHeight / 2 - Utils.canvasProps.centerY;
+            scaledCoord += canvasDimensions.height / 2 - canvasProps.centerY;
         }
         return scaledCoord;
     }
 
     static unmapSingleCoord(singleCoord, index) {
         let unscaledCoord = singleCoord;
+        const { canvasDimensions, canvasProps } = getStore().getState();
         if (index === 0) {
-            unscaledCoord -= Utils.canvasWidth / 2 - Utils.canvasProps.centerX;
+            unscaledCoord -= canvasDimensions.width / 2 - canvasProps.centerX;
         } else if (index === 1) {
-            unscaledCoord -= Utils.canvasHeight / 2 - Utils.canvasProps.centerY;
+            unscaledCoord -= canvasDimensions.height / 2 - canvasProps.centerY;
         }
         return Utils.unscaleSingleCoord(unscaledCoord);
     }

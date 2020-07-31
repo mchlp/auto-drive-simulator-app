@@ -22,14 +22,13 @@ function MapViewer({
     cursorStyle,
     socket,
     averageUpdatesPerSecond,
-    curMode,
     selectedComponent,
     hoveredComponent,
     dispatch,
-    showToggleDynamicLabelOption,
     showDynamicLabels,
     showLowFpsWarning,
     mapDataLoaded,
+    canvasOffset,
 }) {
     const containerRef = useRef(null);
 
@@ -51,8 +50,8 @@ function MapViewer({
     const getMapCoordinatesFromMouseEvent = (event) => {
         const { pageX, pageY } = event;
         const canvasCoordinates = [
-            pageX - Utils.canvasOffsetLeft,
-            pageY - Utils.canvasOffsetTop,
+            pageX - canvasOffset.left,
+            pageY - canvasOffset.top,
         ];
         return Utils.unmapArrayCoord(canvasCoordinates);
     };
@@ -64,12 +63,7 @@ function MapViewer({
     }, [averageUpdatesPerSecond, showDynamicLabels]);
 
     const mouseMoveHandler = (event) => {
-        if (
-            mapDataLoaded &&
-            containerRef &&
-            containerRef.current &&
-            Utils.ready
-        ) {
+        if (mapDataLoaded && containerRef && containerRef.current) {
             const mapCoordinates = getMapCoordinatesFromMouseEvent(event);
             if (onMouseMove) {
                 onMouseMove(mapCoordinates);
@@ -93,7 +87,7 @@ function MapViewer({
     };
 
     const mouseDownHandler = (event) => {
-        if (containerRef && containerRef.current && Utils.ready) {
+        if (containerRef && containerRef.current) {
             const mapCoordinates = getMapCoordinatesFromMouseEvent(event);
 
             if (onMouseDown) {
@@ -141,13 +135,13 @@ function MapViewer({
 
 const mapStateToProps = (state) => {
     return {
-        curMode: state.curMode,
         mapDataLoaded: state.mapDataLoaded,
         averageUpdatesPerSecond: state.averageUpdatesPerSecond,
         selectedComponent: state.selectedComponent,
         hoveredComponent: state.hoveredComponent,
         showDynamicLabels: state.showLabels.dynamic,
         showLowFpsWarning: state.showLowFpsWarning,
+        canvasOffset: state.canvasOffset,
     };
 };
 

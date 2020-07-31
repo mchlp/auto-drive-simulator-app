@@ -24,10 +24,23 @@ const INITIAL_STATE = {
         centerY: 0,
         zoom: 0.5,
     },
+    canvasOffset: {
+        left: 0,
+        top: 0,
+    },
 };
 
 const rootReducer = (curState = INITIAL_STATE, action) => {
     switch (action.type) {
+        case actionTypes.UPDATE_CANVAS_OFFSET: {
+            return {
+                ...curState,
+                canvasOffset: {
+                    ...curState.canvasOffset,
+                    ...action.payload,
+                },
+            };
+        }
         case actionTypes.UPDATE_AVERAGE_RENDERS_PER_SECOND: {
             return {
                 ...curState,

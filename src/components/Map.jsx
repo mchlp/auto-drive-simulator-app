@@ -1,10 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
-import { useState } from 'react';
 import MapRenderer from '../renderers/MapRenderer';
-import Utils from '../utils/Utils';
-import { reduxConstants, actionCreators } from '../redux/actions';
+import {  actionCreators } from '../redux/actions';
 import { connect } from 'react-redux';
 
 const SHOW_LABEL_MIN_ZOOM_LEVEL = 0.4;
@@ -34,49 +32,94 @@ function Map({
                 zoom: 0.5,
             })
         );
-    }, []);
+    }, [dispatch]);
 
     const dragging = useRef(false);
     const lastDragCoord = useRef(null);
 
-    const keyDownHandler = (event) => {
-        const eventKey = event.key;
-        let deltaX = 0;
-        let deltaY = 0;
-        switch (eventKey) {
-            case 'ArrowUp':
-                deltaY = 50;
-                break;
-            case 'ArrowDown':
-                deltaY = -50;
-                break;
-            case 'ArrowLeft':
-                deltaX = 50;
-                break;
-            case 'ArrowRight':
-                deltaX = -50;
-                break;
-            default:
-                break;
-        }
-        dispatch(
-            actionCreators.setCanvasPropsDiff({
-                centerX: deltaX,
-                centerY: deltaY,
-                zoom: 1,
-            })
-        );
-    };
-
     useEffect(() => {
+        const keyDownHandler = (event) => {
+            const eventKey = event.key;
+            let deltaX = 0;
+            let deltaY = 0;
+            switch (eventKey) {
+                case 'ArrowUp':
+                    deltaY = 50;
+                    break;
+                case 'ArrowDown':
+                    deltaY = -50;
+                    break;
+                case 'ArrowLeft':
+                    deltaX = 50;
+                    break;
+                case 'ArrowRight':
+                    deltaX = -50;
+                    break;
+                default:
+                    break;
+            }
+            dispatch(
+                actionCreators.setCanvasPropsDiff({
+                    centerX: deltaX,
+                    centerY: deltaY,
+                    zoom: 1,
+                })
+            );
+        };
+
         window.addEventListener('keydown', keyDownHandler);
         return () => {
             window.removeEventListener('keydown', keyDownHandler);
         };
-    }, []);
+    }, [dispatch]);
+
+    const onZoom = useCallback(
+        (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (mapLoaded) {
+                const { pageX, pageY, deltaY } = event;
+
+                const ZOOM_FACTOR = 1.25;
+                let curZoomFactor = 1;
+                if (deltaY > 0) {
+                    // zoom out
+                    curZoomFactor = 1 / ZOOM_FACTOR;
+                } else if (deltaY < 0) {
+                    // zoom in
+                    curZoomFactor = ZOOM_FACTOR;
+                }
+
+                const zoomCenterInCanvasView = {
+                    x: pageX - staticCanvasRef.current.offsetLeft,
+                    y: pageY - staticCanvasRef.current.offsetTop,
+                };
+
+                const zoomOffsetFromViewCentre = {
+                    x: zoomCenterInCanvasView.x - canvasDimensions.width / 2,
+                    y: zoomCenterInCanvasView.y - canvasDimensions.height / 2,
+                };
+
+                dispatch(
+                    actionCreators.setCanvasPropsZoom(
+                        curZoomFactor,
+                        zoomOffsetFromViewCentre
+                    )
+                );
+            }
+            return false;
+        },
+        [canvasDimensions, dispatch, mapLoaded]
+    );
 
     useEffect(() => {
         if (canvasContainerRef.current) {
+            dispatch(
+                actionCreators.setCanvasOffset({
+                    left: canvasContainerRef.current.offsetLeft,
+                    top: canvasContainerRef.current.offsetTop,
+                })
+            );
             const curCanvasContainerRef = canvasContainerRef.current;
             curCanvasContainerRef.addEventListener('wheel', onZoom, {
                 passive: false,
@@ -85,17 +128,7 @@ function Map({
                 curCanvasContainerRef.removeEventListener('wheel', onZoom);
             };
         }
-    }, [canvasContainerRef, mapLoaded]);
-
-    useEffect(() => {
-        Utils.initUtils(
-            canvasProps,
-            canvasDimensions.width,
-            canvasDimensions.height,
-            canvasContainerRef.current.offsetLeft,
-            canvasContainerRef.current.offsetTop
-        );
-    }, [canvasDimensions, canvasProps]);
+    }, [canvasContainerRef, mapLoaded, dispatch, onZoom]);
 
     useEffect(() => {
         const renderMap = () => {
@@ -155,45 +188,7 @@ function Map({
         }
     };
 
-    const onZoom = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        if (mapLoaded) {
-            const { pageX, pageY, deltaY } = event;
-
-            const ZOOM_FACTOR = 1.25;
-            let curZoomFactor = 1;
-            if (deltaY > 0) {
-                // zoom out
-                curZoomFactor = 1 / ZOOM_FACTOR;
-            } else if (deltaY < 0) {
-                // zoom in
-                curZoomFactor = ZOOM_FACTOR;
-            }
-
-            const zoomCenterInCanvasView = {
-                x: pageX - staticCanvasRef.current.offsetLeft,
-                y: pageY - staticCanvasRef.current.offsetTop,
-            };
-
-            const zoomOffsetFromViewCentre = {
-                x: zoomCenterInCanvasView.x - canvasDimensions.width / 2,
-                y: zoomCenterInCanvasView.y - canvasDimensions.height / 2,
-            };
-
-            dispatch(
-                actionCreators.setCanvasPropsZoom(
-                    curZoomFactor,
-                    zoomOffsetFromViewCentre
-                )
-            );
-        }
-        return false;
-    };
-
     useEffect(() => {
-        console.log(canvasProps.zoom);
-        console.log(showToggleDynamicLabels);
         if (canvasProps.zoom < SHOW_LABEL_MIN_ZOOM_LEVEL) {
             if (showToggleDynamicLabels) {
                 dispatch(actionCreators.setShowToggleDynamicLabels(false));

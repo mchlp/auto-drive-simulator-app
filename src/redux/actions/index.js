@@ -20,9 +20,15 @@ const actionTypes = {
     UPDATE_CANVAS_PROPS_BY_DIFF: 'UPDATE_CANVAS_PROPS_BY_DIFF',
     UPDATE_CANVAS_PROPS: 'UPDATE_CANVAS_PROPS',
     UPDATE_CANVAS_PROPS_BY_ZOOM_FACTOR: 'UPDATE_CANVAS_PROPS_BY_ZOOM_FACTOR',
+    UPDATE_CANVAS_OFFSET: 'UPDATE_CANVAS_OFFSET',
 };
 
 const actionCreators = {};
+
+actionCreators.setCanvasOffset = (canvasOffset) => ({
+    type: actionTypes.UPDATE_CANVAS_OFFSET,
+    payload: canvasOffset,
+});
 
 actionCreators.setCanvasPropsZoom = (zoomFactor, zoomOffsetFromViewCentre) => ({
     type: actionTypes.UPDATE_CANVAS_PROPS_BY_ZOOM_FACTOR,
