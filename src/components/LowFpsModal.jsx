@@ -1,14 +1,13 @@
 import React from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 
-export default function LowFpsModal({ isOpen, setIsOpen, className }) {
+export default function LowFpsModal({ isOpen, setIsOpen }) {
     return (
         <Modal
             isOpen={isOpen}
             toggle={() => {
                 setIsOpen(!isOpen);
             }}
-            className={className}
         >
             <ModalHeader
                 toggle={() => {

@@ -4,6 +4,8 @@ reduxConstants.APP_MODE_LIST = {
     CREATE_MAP: 'create_map',
 };
 
+reduxConstants.COMPLETED_TRIP_VEHICLE_ID = '__trip_completed__';
+
 const actionTypes = {
     UPDATE_MAP_DATA_LOADED: 'UPDATE_MAP_DATA_LOADED',
     UPDATE_AVERAGE_RENDERS_PER_SECOND: 'UPDATE_AVERAGE_RENDERS_PER_SECOND',
@@ -15,6 +17,7 @@ const actionTypes = {
     UPDATE_SHOW_STATIC_LABELS: 'UPDATE_SHOW_STATIC_LABELS',
     UPDATE_SHOW_TOGGLE_DYNAMIC_LABELS: 'UPDATE_SHOW_TOGGLE_DYNAMIC_LABELS',
     UPDATE_SHOW_FPS_WARNING: 'UPDATE_SHOW_FPS_WARNING',
+    UPDATE_SHOW_ABOUT_MODAL: 'UPDATE_SHOW_ABOUT_MODAL',
     UPDATE_CUR_TRIP_VEHICLE_ID: 'UPDATE_CUR_TRIP_VEHICLE_ID',
     UPDATE_FOLLOW_CUR_TRIP_VEHICLE: 'UPDATE_FOLLOW_CUR_TRIP_VEHICLE',
     UPDATE_CANVAS_DIMENSIONS: 'UPDATE_CANVAS_DIMENSIONS',
@@ -25,6 +28,11 @@ const actionTypes = {
 };
 
 const actionCreators = {};
+
+actionCreators.setShowAboutModal = (showAboutModal) => ({
+    type: actionTypes.UPDATE_SHOW_ABOUT_MODAL,
+    payload: showAboutModal,
+});
 
 actionCreators.setFollowCurTripVehicle = (followCurTripVehicle) => ({
     type: actionTypes.UPDATE_FOLLOW_CUR_TRIP_VEHICLE,

@@ -1,6 +1,6 @@
-import Utils from '../utils/Utils';
+import Utils from './Utils';
 import constants from '../constants';
-import MapDataHandler from '../utils/MapDataHandler';
+import MapDataHandler from './MapDataHandler';
 
 const ComponetFinder = {};
 
@@ -40,7 +40,7 @@ const locationFinder = (mapCoordinates, mapData, pointerRadius, excludeIdList) =
             if (distance < constants.DISPLAY.LOCATION_RADIUS + pointerRadius) {
                 return {
                     type: 'location',
-                    id: locationEntry[0],
+                    id: locationEntry[0],                    
                     data: locationEntry[1],
                 };
             }

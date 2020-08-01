@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import MapRenderer from '../renderers/MapRenderer';
 import { actionCreators } from '../redux/actions';
 import { connect } from 'react-redux';
+import { Spinner } from 'reactstrap';
 
 const SHOW_LABEL_MIN_ZOOM_LEVEL = 0.4;
 
@@ -252,7 +253,32 @@ function Map({
                     />
                 </div>
             ) : (
-                <div>Loading map data...</div>
+                <div
+                    style={{
+                        backgroundColor: '#dddddd',
+                        height: '100%',
+                        width: '100%',
+                        display: 'flex',
+                        alignContent: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignContent: 'center',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                        }}
+                    >
+                        <div className="mb-2">
+                            <Spinner type="grow" color="primary" size="m" />
+                        </div>
+                        <div>Conneting to server...</div>
+                    </div>
+                </div>
             )}
         </div>
     );

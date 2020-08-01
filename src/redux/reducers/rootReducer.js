@@ -16,6 +16,7 @@ const INITIAL_STATE = {
     showToggleDynamicLabels: true,
     showLowFpsWarning: false,
     shownLowFpsWarning: false,
+    showAboutModal: true,
     canvasDimensions: {
         width: 0,
         height: 0,
@@ -33,6 +34,12 @@ const INITIAL_STATE = {
 
 const rootReducer = (curState = INITIAL_STATE, action) => {
     switch (action.type) {
+        case actionTypes.UPDATE_SHOW_ABOUT_MODAL: {
+            return {
+                ...curState,
+                showAboutModal: action.payload,
+            };
+        }
         case actionTypes.UPDATE_FOLLOW_CUR_TRIP_VEHICLE: {
             return {
                 ...curState,

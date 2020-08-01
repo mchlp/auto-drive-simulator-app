@@ -38,7 +38,7 @@ export default class VehicleRenderer {
                 if (showLabels || curTripVehicleId === vehicleId) {
                     ctx.lineJoin = 'round';
                     ctx.miterLimit = 2;
-                    const text = `${vehicleId} | Src: ${vehicleData.originId} | Dest: ${vehicleData.destinationId}`;
+                    const text = `${vehicleId} | Src: ${vehicleData.origin.name} | Dest: ${vehicleData.destination.name}`;
                     ctx.font = Utils.scaleSingleCoord(15) + 'px Arial';
                     ctx.strokeStyle = 'black';
                     ctx.strokeWidth = Utils.scaleSingleCoord(1);

@@ -1,9 +1,9 @@
 import React from 'react';
 import MenuSection from './MenuSection';
-import SelectedDisplay from './SelectedDisplay';
-import NavigateSection from './NavigateSection';
-import MenuSettings from './MenuSettings';
-import MapStats from './MapStats';
+import SelectedDisplay from './MenuSections/SelectedDisplay';
+import NavigateSection from './MenuSections/NavigateSection';
+import MenuSettings from './MenuSections/MenuSettings';
+import MapStats from './MenuSections/MapStats';
 import { connect } from 'react-redux';
 
 function Menu({ socket }) {   

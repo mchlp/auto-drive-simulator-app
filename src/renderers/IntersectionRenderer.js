@@ -16,7 +16,8 @@ export default class IntersectionRenderer {
             ) {
                 ctx.lineWidth = 2;
                 ctx.strokeStyle = 'grey';
-                ctx.fillStyle = '#00ff00';
+                // ctx.fillStyle = '#00ff00';
+                ctx.fillStyle = 'black';
                 ctx.setLineDash([]);
 
                 ctx.beginPath();
@@ -29,7 +30,7 @@ export default class IntersectionRenderer {
                     0,
                     2 * Math.PI
                 );
-                ctx.stroke();
+                // ctx.stroke();
                 ctx.fill();
 
                 if (showLabels) {

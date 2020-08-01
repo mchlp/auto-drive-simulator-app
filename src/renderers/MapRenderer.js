@@ -52,8 +52,8 @@ export default class MapRenderer {
             };
 
             RoadRenderer.render(staticCtx, mapData, showLabels);
-            LocationRenderer.render(staticCtx, mapData, showLabels);
-            IntersectionRenderer.render(staticCtx, mapData, showLabels);
+            LocationRenderer.render(staticCtx, mapData, true);
+            IntersectionRenderer.render(staticCtx, mapData, false);
         }
     }
 

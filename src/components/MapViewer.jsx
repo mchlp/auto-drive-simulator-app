@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Map from './Map';
 import { useRef } from 'react';
 import Utils from '../utils/Utils';
-import ComponentFinder from '../builder/ComponentFinder';
+import ComponentFinder from '../utils/ComponentFinder';
 import LowFpsModal from './LowFpsModal';
 import { connect } from 'react-redux';
 import Menu from './Menu';
 import { actionCreators } from '../redux/actions';
+import AboutModalButton from './AboutModalButton';
 
 function MapViewer({
     onMouseMove,
@@ -92,8 +93,9 @@ function MapViewer({
                         dispatch(actionCreators.setShowFpsWarning(open));
                     }}
                 />
-            )}
+            )}            
             <Menu socket={socket} />
+            <AboutModalButton />
             <div
                 onMouseMove={mouseMoveHandler}
                 onMouseDown={mouseDownHandler}
@@ -119,6 +121,7 @@ const mapStateToProps = (state) => {
         selectedComponent: state.selectedComponent,
         hoveredComponent: state.hoveredComponent,
         showDynamicLabels: state.showLabels.dynamic,
+        showAboutModal: state.showAboutModal,
         showLowFpsWarning: state.showLowFpsWarning,
         canvasOffset: state.canvasOffset,
     };

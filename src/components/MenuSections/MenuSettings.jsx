@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { actionCreators, reduxConstants } from '../redux/actions';
+import { actionCreators, reduxConstants } from '../../redux/actions';
 import { Button } from 'reactstrap';
 
 function MenuSettings({

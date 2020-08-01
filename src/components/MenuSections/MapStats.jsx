@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import MapDataHandler from '../utils/MapDataHandler';
+import MapDataHandler from '../../utils/MapDataHandler';
 
 function MapStats({
     mapDataLoaded,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { FormGroup, Label, Input, Button } from 'reactstrap';
-import { actionCreators } from '../redux/actions';
-import MapDataHandler from '../utils/MapDataHandler';
+import { FormGroup, Label, Input, Button, Alert } from 'reactstrap';
+import { actionCreators, reduxConstants } from '../../redux/actions';
+import MapDataHandler from '../../utils/MapDataHandler';
 import { connect } from 'react-redux';
 
 function NavigateSection({
@@ -21,6 +21,17 @@ function NavigateSection({
             });
         }
     };
+
+    useEffect(() => {
+        if (
+            curTripVehicleId &&
+            curTripVehicleId !== reduxConstants.COMPLETED_TRIP_VEHICLE_ID
+        ) {
+            setCurTripVehicleData(
+                MapDataHandler.mapData.vehicles[curTripVehicleId]
+            );
+        }
+    }, []); // should only trigger on mount, not on every curTripVehicleId change
 
     useEffect(() => {
         if (socket) {
@@ -45,22 +56,24 @@ function NavigateSection({
         : [];
 
     locationList.sort((a, b) => {
-        if (a.id < b.id) {
+        if (a.name < b.name) {
             return -1;
-        } else if (a.id > b.id) {
+        } else if (a.name > b.name) {
             return 1;
         }
         return 0;
     });
-
-    console.log(locationList);
 
     const selectOptionStyle = {
         fontSize: 10,
     };
 
     let Content;
-    if (curTripVehicleId && curTripVehicleData) {
+    if (
+        curTripVehicleId &&
+        curTripVehicleId !== reduxConstants.COMPLETED_TRIP_VEHICLE_ID &&
+        curTripVehicleData
+    ) {
         Content = (
             <div
                 style={{
@@ -73,11 +86,11 @@ function NavigateSection({
                 </div>
                 <div>
                     <span className="font-weight-bold">Origin: </span>
-                    {curTripVehicleData.originId}
+                    {curTripVehicleData.origin.name}
                 </div>
                 <div>
                     <span className="font-weight-bold">Destination: </span>
-                    {curTripVehicleData.destinationId}
+                    {curTripVehicleData.destination.name}
                 </div>
                 <div
                     style={{
@@ -111,6 +124,20 @@ function NavigateSection({
                         Toggle Follow Current Trip Vehicle
                     </label>
                 </div>
+                <Button
+                    className="mt-2"
+                    color="primary"
+                    style={{
+                        fontSize: 10,
+                    }}
+                    onClick={() => {
+                        setCurTripVehicleData(null);
+                        dispatch(actionCreators.setCurTripVehicleId(null));
+                        dispatch(actionCreators.setFollowCurTripVehicle(false));
+                    }}
+                >
+                    Start a New Trip
+                </Button>
             </div>
         );
     } else {
@@ -121,9 +148,24 @@ function NavigateSection({
                 }}
             >
                 <div>
+                    {curTripVehicleId ===
+                        reduxConstants.COMPLETED_TRIP_VEHICLE_ID && (
+                        <Alert
+                            className="mb-1 mt-2 p-2"
+                            style={{
+                                textAlign: 'center',
+                            }}
+                            color="success"
+                        >
+                            <div className="font-weight-bold">
+                                You have reached your destination!
+                            </div>
+                            You can start a new trip below.
+                        </Alert>
+                    )}
                     <Label
                         for="navigate-origin"
-                        className="font-weight-bold mb-1 mt-2"
+                        className="font-weight-bold mb-1 mt-1"
                     >
                         Origin
                     </Label>
@@ -137,9 +179,10 @@ function NavigateSection({
                             return (
                                 <option
                                     key={location.id}
+                                    value={location.id}
                                     style={selectOptionStyle}
                                 >
-                                    {location.id}
+                                    {location.name}
                                 </option>
                             );
                         })}
@@ -162,9 +205,10 @@ function NavigateSection({
                             return (
                                 <option
                                     key={location.id}
+                                    value={location.id}
                                     style={selectOptionStyle}
                                 >
-                                    {location.id}
+                                    {location.name}
                                 </option>
                             );
                         })}

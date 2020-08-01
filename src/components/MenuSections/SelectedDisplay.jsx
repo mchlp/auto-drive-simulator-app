@@ -8,6 +8,11 @@ function SelectedDisplay({ hoveredComponent, selectedComponent }) {
         Content = (
             <div>
                 <div>Type: {componentData.type}</div>
+                {componentData &&
+                    componentData.data &&
+                    componentData.data.name && (
+                        <div>Name: {componentData.data.name}</div>
+                    )}
                 <div>ID: {componentData.id}</div>
                 <div>
                     Coord: [{componentData.data.coord[0].toFixed(3)},{' '}

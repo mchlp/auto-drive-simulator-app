@@ -1,5 +1,5 @@
 import { getStore } from '../redux/store';
-import { actionCreators } from '../redux/actions';
+import { actionCreators, reduxConstants } from '../redux/actions';
 import Utils from './Utils';
 
 const MapDataHandler = {};
@@ -20,7 +20,6 @@ const updateMapDataListener = (data) => {
 
     if (getStore().getState().followCurTripVehicle) {
         const curVehicleId = getStore().getState().curTripVehicleId;
-        console.log(curVehicleId);
         if (MapDataHandler.mapData.vehicles[curVehicleId]) {
             const coords = MapDataHandler.mapData.vehicles[curVehicleId].coord;
             getStore().dispatch(
@@ -31,7 +30,11 @@ const updateMapDataListener = (data) => {
             );
         } else {
             getStore().dispatch(actionCreators.setFollowCurTripVehicle(false));
-            getStore().dispatch(actionCreators.setCurTripVehicleId(null));
+            getStore().dispatch(
+                actionCreators.setCurTripVehicleId(
+                    reduxConstants.COMPLETED_TRIP_VEHICLE_ID
+                )
+            );
         }
     }
 
