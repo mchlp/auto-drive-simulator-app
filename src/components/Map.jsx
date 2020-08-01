@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import MapRenderer from '../renderers/MapRenderer';
-import {  actionCreators } from '../redux/actions';
+import { actionCreators } from '../redux/actions';
 import { connect } from 'react-redux';
 
 const SHOW_LABEL_MIN_ZOOM_LEVEL = 0.4;
@@ -13,6 +13,7 @@ function Map({
     canvasProps,
     canvasDimensions,
     mapLoaded,
+    followCurTripVehicle,
 }) {
     const staticCanvasRef = useRef(null);
     const dynamicCanvasRef = useRef(null);
@@ -90,26 +91,39 @@ function Map({
                     curZoomFactor = ZOOM_FACTOR;
                 }
 
-                const zoomCenterInCanvasView = {
-                    x: pageX - staticCanvasRef.current.offsetLeft,
-                    y: pageY - staticCanvasRef.current.offsetTop,
-                };
+                if (followCurTripVehicle) {
+                    dispatch(
+                        actionCreators.setCanvasPropsZoom(curZoomFactor, {
+                            x: 0,
+                            y: 0,
+                        })
+                    );
+                } else {
+                    const zoomCenterInCanvasView = {
+                        x: pageX - staticCanvasRef.current.offsetLeft,
+                        y: pageY - staticCanvasRef.current.offsetTop,
+                    };
 
-                const zoomOffsetFromViewCentre = {
-                    x: zoomCenterInCanvasView.x - canvasDimensions.width / 2,
-                    y: zoomCenterInCanvasView.y - canvasDimensions.height / 2,
-                };
+                    const zoomOffsetFromViewCentre = {
+                        x:
+                            zoomCenterInCanvasView.x -
+                            canvasDimensions.width / 2,
+                        y:
+                            zoomCenterInCanvasView.y -
+                            canvasDimensions.height / 2,
+                    };
 
-                dispatch(
-                    actionCreators.setCanvasPropsZoom(
-                        curZoomFactor,
-                        zoomOffsetFromViewCentre
-                    )
-                );
+                    dispatch(
+                        actionCreators.setCanvasPropsZoom(
+                            curZoomFactor,
+                            zoomOffsetFromViewCentre
+                        )
+                    );
+                }
             }
             return false;
         },
-        [canvasDimensions, dispatch, mapLoaded]
+        [canvasDimensions, dispatch, mapLoaded, followCurTripVehicle]
     );
 
     useEffect(() => {
@@ -144,7 +158,7 @@ function Map({
 
     const onDragStart = (event) => {
         event.preventDefault();
-        if (mapLoaded) {
+        if (mapLoaded && !followCurTripVehicle) {
             dragging.current = true;
             lastDragCoord.current = {
                 x: event.screenX,
@@ -251,6 +265,7 @@ const mapStateToProps = (state) => ({
     showToggleDynamicLabels: state.showToggleDynamicLabels,
     canvasProps: state.canvasProps,
     canvasDimensions: state.canvasDimensions,
+    followCurTripVehicle: state.followCurTripVehicle,
 });
 
 export default connect(mapStateToProps)(Map);

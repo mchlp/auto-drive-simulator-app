@@ -15,7 +15,8 @@ const actionTypes = {
     UPDATE_SHOW_STATIC_LABELS: 'UPDATE_SHOW_STATIC_LABELS',
     UPDATE_SHOW_TOGGLE_DYNAMIC_LABELS: 'UPDATE_SHOW_TOGGLE_DYNAMIC_LABELS',
     UPDATE_SHOW_FPS_WARNING: 'UPDATE_SHOW_FPS_WARNING',
-    UPDATE_CUR_TRIP_VEHICLE: 'UPDATE_CUR_TRIP_VEHICLE',
+    UPDATE_CUR_TRIP_VEHICLE_ID: 'UPDATE_CUR_TRIP_VEHICLE_ID',
+    UPDATE_FOLLOW_CUR_TRIP_VEHICLE: 'UPDATE_FOLLOW_CUR_TRIP_VEHICLE',
     UPDATE_CANVAS_DIMENSIONS: 'UPDATE_CANVAS_DIMENSIONS',
     UPDATE_CANVAS_PROPS_BY_DIFF: 'UPDATE_CANVAS_PROPS_BY_DIFF',
     UPDATE_CANVAS_PROPS: 'UPDATE_CANVAS_PROPS',
@@ -24,6 +25,11 @@ const actionTypes = {
 };
 
 const actionCreators = {};
+
+actionCreators.setFollowCurTripVehicle = (followCurTripVehicle) => ({
+    type: actionTypes.UPDATE_FOLLOW_CUR_TRIP_VEHICLE,
+    payload: followCurTripVehicle,
+});
 
 actionCreators.setCanvasOffset = (canvasOffset) => ({
     type: actionTypes.UPDATE_CANVAS_OFFSET,
@@ -85,9 +91,9 @@ actionCreators.setShowFpsWarning = (showFpsWarning) => ({
     payload: showFpsWarning,
 });
 
-actionCreators.setCurTripVehicle = (curTripVehicle) => ({
-    type: actionTypes.UPDATE_CUR_TRIP_VEHICLE,
-    payload: curTripVehicle,
+actionCreators.setCurTripVehicleId = (curTripVehicleId) => ({
+    type: actionTypes.UPDATE_CUR_TRIP_VEHICLE_ID,
+    payload: curTripVehicleId,
 });
 
 actionCreators.setMapDataLoaded = (mapDataLoaded) => ({

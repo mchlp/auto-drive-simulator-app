@@ -8,9 +8,6 @@ export default class LocationRenderer {
             const locationData = locationEntry[1];
 
             const coord = Utils.mapArrayCoord(locationData.coord);
-            if (locationId === 'location_pp8yrc5meoRCDoJfxyVpcq') {
-                console.log(coord);
-            }
             if (
                 Utils.checkCoordinateInCanvasView(
                     coord,

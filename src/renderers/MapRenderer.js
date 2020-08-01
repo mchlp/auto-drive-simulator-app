@@ -19,9 +19,17 @@ export default class MapRenderer {
 
     static getShowLabels() {
         const curState = getStore().getState();
-        const { showToggleDynamicLabels } = curState;
+        const { showToggleDynamicLabels, followCurTripVehicle } = curState;
         const showDynamicLabels = curState.showLabels.dynamic;
-        return showToggleDynamicLabels && showDynamicLabels;
+        return (
+            showToggleDynamicLabels &&
+            showDynamicLabels &&
+            !followCurTripVehicle
+        );
+    }
+
+    static getCurTripVehicleId() {
+        return getStore().getState().curTripVehicleId;
     }
 
     static _renderStatic(staticCanvas) {
@@ -59,7 +67,12 @@ export default class MapRenderer {
         if (mapData && dynamicCanvas) {
             const dynamicCtx = dynamicCanvas.getContext('2d');
             dynamicCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-            VehicleRenderer.render(dynamicCtx, mapData, showLabels);
+            VehicleRenderer.render(
+                dynamicCtx,
+                mapData,
+                showLabels,
+                this.getCurTripVehicleId()
+            );
         }
     }
 

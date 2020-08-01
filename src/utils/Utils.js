@@ -10,12 +10,11 @@ export default class Utils {
     static getCanvasViewCutoffs() {
         const { canvasDimensions } = getStore().getState();
         const cutoffs = {
-            left: 50,
-            right: canvasDimensions.width - 50,
-            top: 50,
-            bottom: canvasDimensions.height - 50,
+            left: 0,
+            right: canvasDimensions.width,
+            top: 0,
+            bottom: canvasDimensions.height,
         };
-        console.log(cutoffs);
         return cutoffs;
     }
 

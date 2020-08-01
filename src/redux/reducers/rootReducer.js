@@ -11,10 +11,11 @@ const INITIAL_STATE = {
         dynamic: true,
         static: true,
     },
+    curTripVehicleId: null,
+    followCurTripVehicle: false,
     showToggleDynamicLabels: true,
     showLowFpsWarning: false,
     shownLowFpsWarning: false,
-    curTripVehicle: null,
     canvasDimensions: {
         width: 0,
         height: 0,
@@ -32,6 +33,16 @@ const INITIAL_STATE = {
 
 const rootReducer = (curState = INITIAL_STATE, action) => {
     switch (action.type) {
+        case actionTypes.UPDATE_FOLLOW_CUR_TRIP_VEHICLE: {
+            return {
+                ...curState,
+                followCurTripVehicle: action.payload,
+                canvasProps: {
+                    ...curState.canvasProps,
+                    zoom: action.payload ? 1 : curState.canvasProps.zoom,
+                },
+            };
+        }
         case actionTypes.UPDATE_CANVAS_OFFSET: {
             return {
                 ...curState,
@@ -164,10 +175,10 @@ const rootReducer = (curState = INITIAL_STATE, action) => {
                 };
             }
         }
-        case actionTypes.UPDATE_CUR_TRIP_VEHICLE: {
+        case actionTypes.UPDATE_CUR_TRIP_VEHICLE_ID: {
             return {
                 ...curState,
-                curTripVehicle: action.payload,
+                curTripVehicleId: action.payload,
             };
         }
         default:

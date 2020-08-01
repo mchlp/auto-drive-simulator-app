@@ -1,5 +1,6 @@
 import { getStore } from '../redux/store';
 import { actionCreators } from '../redux/actions';
+import Utils from './Utils';
 
 const MapDataHandler = {};
 
@@ -17,6 +18,24 @@ const updateMapDataListener = (data) => {
         getStore().dispatch(actionCreators.setMapDataLoaded(true));
     }
 
+    if (getStore().getState().followCurTripVehicle) {
+        const curVehicleId = getStore().getState().curTripVehicleId;
+        console.log(curVehicleId);
+        if (MapDataHandler.mapData.vehicles[curVehicleId]) {
+            const coords = MapDataHandler.mapData.vehicles[curVehicleId].coord;
+            getStore().dispatch(
+                actionCreators.setCanvasProps({
+                    centerX: Utils.scaleSingleCoord(coords[0]),
+                    centerY: Utils.scaleSingleCoord(coords[1]),
+                })
+            );
+        } else {
+            getStore().dispatch(actionCreators.setFollowCurTripVehicle(false));
+            getStore().dispatch(actionCreators.setCurTripVehicleId(null));
+        }
+    }
+
+    // update FPS
     const now = performance.now();
     const lastUpdateTimeElapsed = now - MapDataHandler.lastUpdateTime;
     MapDataHandler.lastUpdateTimeElapsedList.push(lastUpdateTimeElapsed);
