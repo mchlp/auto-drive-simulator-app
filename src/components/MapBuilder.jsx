@@ -4,8 +4,9 @@ import MapViewer from './MapViewer';
 import constants from '../constants';
 import Utils from '../utils/Utils';
 import rawMapData from './test.json';
-import { actionCreators } from '../redux/actions';
+import { actionCreators, reduxConstants } from '../redux/actions';
 import { connect } from 'react-redux';
+import MapDataHandler from '../utils/MapDataHandler';
 
 const POINTER_TYPE = {
     INTERSECTION: 'intersection',
@@ -16,18 +17,25 @@ const POINTER_TYPE = {
     DELETE: 'delete',
 };
 
-function MapBuilder() {
+function MapBuilder({
+    dispatch,
+    curMode,
+    selectedComponent,
+    hoveredComponent,
+}) {
     const prevSavedMapData = useRef(
         JSON.parse(localStorage.getItem('saved-map-data')) || rawMapData
     );
     const curPointerComponentId = useRef(null);
     const [roadStartWaypointId, setRoadStartWaypointId] = useState(null);
     const [roadType, setRoadType] = useState(null);
-    const [curHoverComponent, setCurHoverComponent] = useState(null);
-    const [curSelectComponent, setCurSelectComponent] = useState(null);
-    const [mapData, setMapData] = useState(rawMapData);
     const [curPointerType, setCurPointerType] = useState(POINTER_TYPE.NONE);
     const [saveMapData, setSaveMapData] = useState('');
+
+    useEffect(() => {
+        console.log(curMode);
+        MapDataHandler.updateMapData(prevSavedMapData.current);
+    }, [curMode]);
 
     const keyDownHandler = (event) => {
         if (event.key === 'Escape') {
@@ -45,47 +53,43 @@ function MapBuilder() {
 
     const mouseMoveHandler = (mapCoordinates) => {
         if (curPointerType === POINTER_TYPE.INTERSECTION) {
-            setMapData((prevMapData) => {
-                let nextIntersectionId = curPointerComponentId.current;
-                if (
-                    !nextIntersectionId ||
-                    !nextIntersectionId.includes('intersection')
-                ) {
-                    nextIntersectionId = `intersection_${Utils.generateShortUuid()}`;
-                }
-                curPointerComponentId.current = nextIntersectionId;
-                return {
-                    ...prevMapData,
-                    intersections: {
-                        ...prevMapData.intersections,
-                        [nextIntersectionId]: {
-                            id: nextIntersectionId,
-                            coord: mapCoordinates,
-                        },
+            let nextIntersectionId = curPointerComponentId.current;
+            if (
+                !nextIntersectionId ||
+                !nextIntersectionId.includes('intersection')
+            ) {
+                nextIntersectionId = `intersection_${Utils.generateShortUuid()}`;
+            }
+            curPointerComponentId.current = nextIntersectionId;
+            MapDataHandler.updateMapData({
+                ...MapDataHandler.mapData,
+                intersections: {
+                    ...MapDataHandler.mapData.intersections,
+                    [nextIntersectionId]: {
+                        id: nextIntersectionId,
+                        coord: mapCoordinates,
                     },
-                };
+                },
             });
         } else if (curPointerType === POINTER_TYPE.LOCATION) {
-            setMapData((prevMapData) => {
-                let nextLocationId = curPointerComponentId.current;
-                if (!nextLocationId || !nextLocationId.includes('location')) {
-                    nextLocationId = `location_${Utils.generateShortUuid()}`;
-                }
-                curPointerComponentId.current = nextLocationId;
+            let nextLocationId = curPointerComponentId.current;
+            if (!nextLocationId || !nextLocationId.includes('location')) {
+                nextLocationId = `location_${Utils.generateShortUuid()}`;
+            }
+            curPointerComponentId.current = nextLocationId;
 
-                return {
-                    ...prevMapData,
-                    locations: {
-                        ...prevMapData.locations,
-                        [nextLocationId]: {
-                            id: nextLocationId,
-                            coord: mapCoordinates,
-                        },
+            MapDataHandler.updateMapData({
+                ...MapDataHandler.mapData,
+                locations: {
+                    ...MapDataHandler.mapData.locations,
+                    [nextLocationId]: {
+                        id: nextLocationId,
+                        coord: mapCoordinates,
                     },
-                };
+                },
             });
         } else {
-            setMapData(prevSavedMapData.current);
+            MapDataHandler.updateMapData(prevSavedMapData.current);
             curPointerComponentId.current = null;
         }
     };
@@ -95,15 +99,15 @@ function MapBuilder() {
             curPointerType === POINTER_TYPE.INTERSECTION ||
             curPointerType === POINTER_TYPE.LOCATION
         ) {
-            if (!curHoverComponent) {
-                prevSavedMapData.current = mapData;
+            if (!hoveredComponent) {
+                prevSavedMapData.current = MapDataHandler.mapData;
                 curPointerComponentId.current = null;
             }
         } else if (curPointerType === POINTER_TYPE.ROAD) {
-            if (curHoverComponent) {
+            if (hoveredComponent) {
                 if (!roadStartWaypointId) {
                     // road start point
-                    setRoadStartWaypointId(curHoverComponent.id);
+                    setRoadStartWaypointId(hoveredComponent.id);
                 } else {
                     // road end point
                     const nextRoadId = `road_${Utils.generateShortUuid()}`;
@@ -116,30 +120,30 @@ function MapBuilder() {
                                 id: nextRoadId,
                                 type: roadType,
                                 start: roadStartWaypointId,
-                                end: curHoverComponent.id,
+                                end: hoveredComponent.id,
                             },
                         },
                     };
                     prevSavedMapData.current = newMapData;
-                    setMapData(newMapData);
-                    setRoadStartWaypointId(curHoverComponent.id);
+                    MapDataHandler.updateMapData(newMapData);
+                    setRoadStartWaypointId(hoveredComponent.id);
                 }
             }
         } else if (curPointerType === POINTER_TYPE.DELETE) {
-            if (curHoverComponent) {
-                deleteComponent(curHoverComponent);
+            if (hoveredComponent) {
+                deleteComponent(hoveredComponent);
             }
         }
     };
 
-    const lastSavedTime = useRef(performance.now());
     useEffect(() => {
-        const now = performance.now();
-        if (now - lastSavedTime.current > 5000) {
+        const interval = setInterval(() => {
             localStorage.setItem('saved-map-data', getSerializedMap());
-            lastSavedTime.current = now;
-        }
-    }, [mapData]);
+        }, 5000);
+        return () => {
+            clearInterval(interval);
+        };
+    }, []);
 
     const getSerializedMap = () => {
         const serializedMap = {
@@ -155,14 +159,6 @@ function MapBuilder() {
     const saveMap = () => {
         setCurPointerType(POINTER_TYPE.SAVE_MAP);
         setSaveMapData(getSerializedMap());
-    };
-
-    const hoverComponentChangeHandler = (newHoverComponent) => {
-        setCurHoverComponent(newHoverComponent);
-    };
-
-    const selectComponentChangeHandler = (newSelectComponent) => {
-        setCurSelectComponent(newSelectComponent);
     };
 
     const deleteComponent = (deleteComponent) => {
@@ -192,7 +188,7 @@ function MapBuilder() {
 
             prevSavedMapData.current = newMapData;
             curPointerComponentId.current = null;
-            setMapData(newMapData);
+            MapDataHandler.updateMapData(newMapData);
         }
     };
 
@@ -210,91 +206,62 @@ function MapBuilder() {
         cursorStyle = 'no-drop';
     }
 
+    const buildActionHandler = (buildAction) => {
+        switch (buildAction) {
+            case reduxConstants.BUILD_ACTIONS.ADD_LOCATION: {
+                MapDataHandler.updateMapData(prevSavedMapData.current);
+                setCurPointerType(POINTER_TYPE.LOCATION);
+                curPointerComponentId.current = null;
+                break;
+            }
+            case reduxConstants.BUILD_ACTIONS.ADD_INTERSECTION: {
+                MapDataHandler.updateMapData(prevSavedMapData.current);
+                setCurPointerType(POINTER_TYPE.INTERSECTION);
+                curPointerComponentId.current = null;
+                break;
+            }
+            case reduxConstants.BUILD_ACTIONS.BUILD_MAJOR_ROAD: {
+                MapDataHandler.updateMapData(prevSavedMapData.current);
+                setCurPointerType(POINTER_TYPE.ROAD);
+                setRoadType(constants.ROAD_TYPES.TYPES.MAJOR);
+                break;
+            }
+            case reduxConstants.BUILD_ACTIONS.BUILD_MINOR_ROAD: {
+                MapDataHandler.updateMapData(prevSavedMapData.current);
+                setCurPointerType(POINTER_TYPE.ROAD);
+                setRoadType(constants.ROAD_TYPES.TYPES.MINOR);
+                break;
+            }
+            case reduxConstants.BUILD_ACTIONS.BUILD_LOCAL_ROAD: {
+                MapDataHandler.updateMapData(prevSavedMapData.current);
+                setCurPointerType(POINTER_TYPE.ROAD);
+                setRoadType(constants.ROAD_TYPES.TYPES.LOCAL);
+                break;
+            }
+            case reduxConstants.BUILD_ACTIONS.DELETE_COMPONENTS: {
+                MapDataHandler.updateMapData(prevSavedMapData.current);
+                setCurPointerType(POINTER_TYPE.DELETE);
+                curPointerComponentId.current = null;
+                break;
+            }
+            case reduxConstants.BUILD_ACTIONS.RESET_POINTER: {
+                setRoadStartWaypointId(null);
+                MapDataHandler.updateMapData(prevSavedMapData.current);
+                setCurPointerType(POINTER_TYPE.NONE);
+                curPointerComponentId.current = null;
+                break;
+            }
+            case reduxConstants.BUILD_ACTIONS.SAVE_MAP: {
+                saveMap();
+                break;
+            }
+            default:
+                break;
+        }
+    };
+
     return (
         <div className="mt-1">
-            <div>
-                <Button
-                    color="primary"
-                    className="m-1"
-                    onClick={() => {
-                        setMapData(prevSavedMapData.current);
-                        setCurPointerType(POINTER_TYPE.LOCATION);
-                        curPointerComponentId.current = null;
-                    }}
-                >
-                    Add Location
-                </Button>
-                <Button
-                    color="primary"
-                    onClick={() => {
-                        setMapData(prevSavedMapData.current);
-                        setCurPointerType(POINTER_TYPE.INTERSECTION);
-                        curPointerComponentId.current = null;
-                    }}
-                    className="m-1"
-                >
-                    Add Intersection
-                </Button>
-                <Button
-                    color="primary"
-                    onClick={() => {
-                        setMapData(prevSavedMapData.current);
-                        setCurPointerType(POINTER_TYPE.ROAD);
-                        setRoadType(constants.ROAD_TYPES.TYPES.MAJOR);
-                    }}
-                    className="m-1"
-                >
-                    Build Major Road
-                </Button>
-                <Button
-                    color="primary"
-                    onClick={() => {
-                        setMapData(prevSavedMapData.current);
-                        setCurPointerType(POINTER_TYPE.ROAD);
-                        setRoadType(constants.ROAD_TYPES.TYPES.MINOR);
-                    }}
-                    className="m-1"
-                >
-                    Build Minor Road
-                </Button>
-                <Button
-                    color="primary"
-                    onClick={() => {
-                        setMapData(prevSavedMapData.current);
-                        setCurPointerType(POINTER_TYPE.ROAD);
-                        setRoadType(constants.ROAD_TYPES.TYPES.LOCAL);
-                    }}
-                    className="m-1"
-                >
-                    Build Local Road
-                </Button>
-                <Button
-                    color="primary"
-                    onClick={() => {
-                        setMapData(prevSavedMapData.current);
-                        setCurPointerType(POINTER_TYPE.DELETE);
-                        curPointerComponentId.current = null;
-                    }}
-                    className="m-1"
-                >
-                    Delete Components
-                </Button>
-                <Button
-                    color="primary"
-                    onClick={() => {
-                        setRoadStartWaypointId(null);
-                        setMapData(prevSavedMapData.current);
-                        setCurPointerType(POINTER_TYPE.NONE);
-                        curPointerComponentId.current = null;
-                    }}
-                    className="m-1"
-                >
-                    Reset Pointer
-                </Button>
-                <Button color="success" onClick={saveMap} className="m-1">
-                    Save Map
-                </Button>
-            </div>
             {curPointerType === POINTER_TYPE.SAVE_MAP && (
                 <Alert className="mt-2">
                     <div className="mb-2">
@@ -305,14 +272,12 @@ function MapBuilder() {
             )}
             <div>
                 <MapViewer
-                    mapData={mapData}
                     onMouseMove={mouseMoveHandler}
                     onMouseDown={mouseDownHandler}
-                    onHoverComponentChanged={hoverComponentChangeHandler}
-                    onSelectComponentChange={selectComponentChangeHandler}
                     curPointerRadius={curPointerRadius}
                     curPointerComponentId={curPointerComponentId.current}
                     cursorStyle={cursorStyle}
+                    buildActionHandler={buildActionHandler}
                 />
             </div>
         </div>
@@ -321,7 +286,9 @@ function MapBuilder() {
 
 const mapStateToProps = (state) => {
     return {
-        curState: state.curState,
+        curMode: state.curMode,
+        selectedComponent: state.selectedComponent,
+        hoveredComponent: state.hoveredComponent,
     };
 };
 

@@ -2,11 +2,13 @@ import React from 'react';
 import MenuSection from './MenuSection';
 import SelectedDisplay from './MenuSections/SelectedDisplay';
 import NavigateSection from './MenuSections/NavigateSection';
-import MenuSettings from './MenuSections/MenuSettings';
+import MapSettings from './MenuSections/MapSettings';
 import MapStats from './MenuSections/MapStats';
 import { connect } from 'react-redux';
+import { reduxConstants } from '../redux/actions';
+import BuildSection from './MenuSections/BuildSection';
 
-function Menu({ socket }) {   
+function Menu({ socket, curMode, buildActionHandler }) {
     return (
         <div
             style={{
@@ -25,20 +27,24 @@ function Menu({ socket }) {
                 <SelectedDisplay />
             </MenuSection>
             <MenuSection sectionName="Navigator">
-                <NavigateSection socket={socket} />
+                {curMode === reduxConstants.APP_MODE_LIST.VIEW_MAP ? (
+                    <NavigateSection socket={socket} />
+                ) : (
+                    <BuildSection buildActionHandler={buildActionHandler} />
+                )}
             </MenuSection>
             <MenuSection sectionName="Map Stats">
                 <MapStats />
             </MenuSection>
-            <MenuSection sectionName="Menu Settings">
-                <MenuSettings />
+            <MenuSection sectionName="Map Settings">
+                <MapSettings />
             </MenuSection>
         </div>
     );
 }
 
 const mapStateToProps = (state) => {
-    return {};
+    return { curMode: state.curMode };
 };
 
 export default connect(mapStateToProps)(Menu);

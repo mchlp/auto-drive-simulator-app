@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import MapDataHandler from '../../utils/MapDataHandler';
+import { reduxConstants } from '../../redux/actions';
 
 function MapStats({
     mapDataLoaded,
     averageUpdatesPerSecond,
     averageRendersPerSecond,
+    curMode,
 }) {
     let Content;
     const statRowStyle = {};
@@ -28,9 +30,11 @@ function MapStats({
                 <div style={statRowStyle}>
                     Total Roads: {Object.keys(mapData.roads).length}
                 </div>
-                <div style={statRowStyle}>
-                    Avg Updates/Sec: {averageUpdatesPerSecond.toFixed(2)}
-                </div>
+                {curMode === reduxConstants.APP_MODE_LIST.VIEW_MAP && (
+                    <div style={statRowStyle}>
+                        Avg Updates/Sec: {averageUpdatesPerSecond.toFixed(2)}
+                    </div>
+                )}
                 <div style={statRowStyle}>
                     Avg Renders/Sec: {averageRendersPerSecond.toFixed(2)}
                 </div>
@@ -56,6 +60,7 @@ const mapStateToProps = (state) => {
         averageUpdatesPerSecond: state.averageUpdatesPerSecond,
         averageRendersPerSecond: state.averageRendersPerSecond,
         mapDataLoaded: state.mapDataLoaded,
+        curMode: state.curMode,
     };
 };
 

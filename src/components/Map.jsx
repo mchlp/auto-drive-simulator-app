@@ -145,16 +145,24 @@ function Map({
         }
     }, [canvasContainerRef, mapLoaded, dispatch, onZoom]);
 
+    const curWindowRequestAnimationFrame = useRef(null);
     useEffect(() => {
         const renderMap = () => {
             MapRenderer.renderAll(
                 staticCanvasRef.current,
                 dynamicCanvasRef.current
             );
-            window.requestAnimationFrame(renderMap);
+            curWindowRequestAnimationFrame.current = window.requestAnimationFrame(
+                renderMap
+            );
         };
+        curWindowRequestAnimationFrame.current = window.requestAnimationFrame(
+            renderMap
+        );
 
-        window.requestAnimationFrame(renderMap);
+        return () => {
+            window.cancelAnimationFrame(curWindowRequestAnimationFrame.current);
+        };
     }, []);
 
     const onDragStart = (event) => {

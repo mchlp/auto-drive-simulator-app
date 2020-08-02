@@ -11,10 +11,11 @@ MapDataHandler.lastReduxUpdateTime = performance.now();
 
 const REDUX_UPDATE_INTERVAL = 1000;
 
-const updateMapDataListener = (data) => {
+const updateMapDataListener = (data, manualUpdate = false) => {
     const mapDataLoadedBefore = !!MapDataHandler.mapData;
 
     if (
+        manualUpdate ||
         getStore().getState().curMode === reduxConstants.APP_MODE_LIST.VIEW_MAP
     ) {
         MapDataHandler.mapData = data;
@@ -75,6 +76,10 @@ MapDataHandler.init = (socket) => {
 
 MapDataHandler.cleanup = (socket) => {
     socket.off('update-map-data', updateMapDataListener);
+};
+
+MapDataHandler.updateMapData = (data) => {
+    updateMapDataListener(data, true);
 };
 
 export default MapDataHandler;

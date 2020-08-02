@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { actionCreators, reduxConstants } from '../../redux/actions';
 import { Button } from 'reactstrap';
 
-function MenuSettings({
+function MapSettings({
     curMode,
     showToggleDynamicLabels,
     showDynamicLabels,
@@ -12,40 +12,42 @@ function MenuSettings({
 }) {
     return (
         <div>
-            {showToggleDynamicLabels && !followCurTripVehicle && (
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        alignContent: 'center',
-                    }}
-                    className="my-1"
-                >
-                    <input
-                        type="checkbox"
-                        id="show-labels-chkbox"
-                        className="mr-1"
-                        checked={showDynamicLabels}
-                        onChange={(event) => {
-                            const checked = event.target.checked;
-                            dispatch(
-                                actionCreators.setShowDynamicLabels(checked)
-                            );
-                        }}
-                    />
-                    <label
-                        htmlFor="show-labels-chkbox"
-                        className="m-0"
+            {showToggleDynamicLabels &&
+                !followCurTripVehicle &&
+                curMode === reduxConstants.APP_MODE_LIST.VIEW_MAP && (
+                    <div
                         style={{
-                            userSelect: 'none',
-                            fontSize: 10,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            alignContent: 'center',
                         }}
+                        className="my-1"
                     >
-                        Toggle Vehicle Labels
-                    </label>
-                </div>
-            )}
+                        <input
+                            type="checkbox"
+                            id="show-labels-chkbox"
+                            className="mr-1"
+                            checked={showDynamicLabels}
+                            onChange={(event) => {
+                                const checked = event.target.checked;
+                                dispatch(
+                                    actionCreators.setShowDynamicLabels(checked)
+                                );
+                            }}
+                        />
+                        <label
+                            htmlFor="show-labels-chkbox"
+                            className="m-0"
+                            style={{
+                                userSelect: 'none',
+                                fontSize: 10,
+                            }}
+                        >
+                            Toggle Vehicle Labels
+                        </label>
+                    </div>
+                )}
             <div>
                 <Button
                     color="link"
@@ -89,4 +91,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(MenuSettings);
+export default connect(mapStateToProps)(MapSettings);

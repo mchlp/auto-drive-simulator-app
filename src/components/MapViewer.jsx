@@ -24,6 +24,7 @@ function MapViewer({
     showLowFpsWarning,
     mapDataLoaded,
     canvasOffset,
+    buildActionHandler,
 }) {
     const containerRef = useRef(null);
 
@@ -93,8 +94,8 @@ function MapViewer({
                         dispatch(actionCreators.setShowFpsWarning(open));
                     }}
                 />
-            )}            
-            <Menu socket={socket} />
+            )}
+            <Menu socket={socket} buildActionHandler={buildActionHandler} />
             <AboutModalButton />
             <div
                 onMouseMove={mouseMoveHandler}
