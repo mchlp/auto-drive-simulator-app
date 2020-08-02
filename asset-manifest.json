@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.js": "/auto-drive-simulator-app/static/js/main.5eec3d9b.chunk.js",
-    "main.js.map": "/auto-drive-simulator-app/static/js/main.5eec3d9b.chunk.js.map",
+    "main.js": "/auto-drive-simulator-app/static/js/main.34b8ad1f.chunk.js",
+    "main.js.map": "/auto-drive-simulator-app/static/js/main.34b8ad1f.chunk.js.map",
     "runtime-main.js": "/auto-drive-simulator-app/static/js/runtime-main.efdf206c.js",
     "runtime-main.js.map": "/auto-drive-simulator-app/static/js/runtime-main.efdf206c.js.map",
     "static/css/2.af3c1da9.chunk.css": "/auto-drive-simulator-app/static/css/2.af3c1da9.chunk.css",
-    "static/js/2.01d94583.chunk.js": "/auto-drive-simulator-app/static/js/2.01d94583.chunk.js",
-    "static/js/2.01d94583.chunk.js.map": "/auto-drive-simulator-app/static/js/2.01d94583.chunk.js.map",
+    "static/js/2.6e37c48e.chunk.js": "/auto-drive-simulator-app/static/js/2.6e37c48e.chunk.js",
+    "static/js/2.6e37c48e.chunk.js.map": "/auto-drive-simulator-app/static/js/2.6e37c48e.chunk.js.map",
     "index.html": "/auto-drive-simulator-app/index.html",
-    "precache-manifest.a5e7544332f3ca415e8d947835ffaffe.js": "/auto-drive-simulator-app/precache-manifest.a5e7544332f3ca415e8d947835ffaffe.js",
+    "precache-manifest.c98b5b2dd5b794cdd5350bcde8f283db.js": "/auto-drive-simulator-app/precache-manifest.c98b5b2dd5b794cdd5350bcde8f283db.js",
     "service-worker.js": "/auto-drive-simulator-app/service-worker.js",
     "static/css/2.af3c1da9.chunk.css.map": "/auto-drive-simulator-app/static/css/2.af3c1da9.chunk.css.map",
-    "static/js/2.01d94583.chunk.js.LICENSE.txt": "/auto-drive-simulator-app/static/js/2.01d94583.chunk.js.LICENSE.txt"
+    "static/js/2.6e37c48e.chunk.js.LICENSE.txt": "/auto-drive-simulator-app/static/js/2.6e37c48e.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.efdf206c.js",
     "static/css/2.af3c1da9.chunk.css",
-    "static/js/2.01d94583.chunk.js",
-    "static/js/main.5eec3d9b.chunk.js"
+    "static/js/2.6e37c48e.chunk.js",
+    "static/js/main.34b8ad1f.chunk.js"
   ]
 }
