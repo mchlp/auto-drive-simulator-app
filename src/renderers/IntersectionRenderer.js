@@ -34,7 +34,7 @@ export default class IntersectionRenderer {
                 ctx.fill();
 
                 if (showLabels) {
-                    ctx.font = Utils.scaleSingleCoord(50) + 'px Arial';
+                    ctx.font = Utils.scaleSingleCoord(50) + 'px Roboto';
                     ctx.strokeStyle = 'white';
                     ctx.strokeWidth = Utils.scaleSingleCoord(2);
                     ctx.strokeText(intersectionId, coord[0], coord[1]);

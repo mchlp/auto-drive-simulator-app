@@ -31,7 +31,7 @@ export default class LocationRenderer {
                 ctx.fill();
 
                 if (showLabels) {
-                    ctx.font = Utils.scaleSingleCoord(25) + 'px Arial';
+                    ctx.font = Utils.scaleSingleCoord(25) + 'px Roboto';
                     ctx.strokeStyle = 'white';
                     ctx.strokeWidth = Utils.scaleSingleCoord(2);
                     ctx.strokeText(locationData.name, coord[0], coord[1]);

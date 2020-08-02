@@ -13,7 +13,13 @@ const REDUX_UPDATE_INTERVAL = 1000;
 
 const updateMapDataListener = (data) => {
     const mapDataLoadedBefore = !!MapDataHandler.mapData;
-    MapDataHandler.mapData = data;
+
+    if (
+        getStore().getState().curMode === reduxConstants.APP_MODE_LIST.VIEW_MAP
+    ) {
+        MapDataHandler.mapData = data;
+    }
+
     if (!mapDataLoadedBefore) {
         getStore().dispatch(actionCreators.setMapDataLoaded(true));
     }
