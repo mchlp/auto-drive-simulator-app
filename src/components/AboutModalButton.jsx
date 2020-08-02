@@ -23,19 +23,45 @@ function AboutModalButton({ showAboutModal, dispatch }) {
                     setIsOpen(!isOpen);
                 }}
             >
-                About
+                <img
+                    src={process.env.PUBLIC_URL + '/logo512.png'}
+                    alt="App logo"
+                    height={30}
+                    className="mr-3"
+                />
+                About Auto Drive Simulator
             </ModalHeader>
-            <ModalBody>About the app.</ModalBody>
-            <ModalFooter>
-                <Button
-                    color="primary"
-                    onClick={() => {
-                        setIsOpen(!isOpen);
-                    }}
-                >
-                    OK
-                </Button>
-            </ModalFooter>
+            <ModalBody>
+                <div>
+                    <div
+                        style={{
+                            fontSize: 12,
+                            color: 'grey',
+                        }}
+                    >
+                        A web app to simulate a city of fully autonmous driving
+                        vehicles.
+                    </div>
+                    <hr />
+                    <div
+                        style={{
+                            fontSize: 8,
+                        }}
+                    >
+                        Icons made by{' '}
+                        <a
+                            href="https://www.flaticon.com/authors/freepik"
+                            title="Freepik"
+                        >
+                            Freepik
+                        </a>{' '}
+                        from{' '}
+                        <a href="https://www.flaticon.com/" title="Flaticon">
+                            www.flaticon.com
+                        </a>
+                    </div>
+                </div>
+            </ModalBody>
         </Modal>
     );
 

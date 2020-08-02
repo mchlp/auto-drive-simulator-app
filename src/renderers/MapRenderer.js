@@ -43,13 +43,7 @@ export default class MapRenderer {
             const staticCtx = staticCanvas.getContext('2d');
             staticCtx.clearRect(0, 0, canvasWidth, canvasHeight);
             staticCtx.fillStyle = '#dddddd';
-            staticCtx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-            const logoImage = new Image();
-            logoImage.src = '/logo192.png';
-            logoImage.onload = () => {
-                staticCtx.drawImage(logoImage, 0, 0, 50, 50);
-            };
+            staticCtx.fillRect(0, 0, canvasWidth, canvasHeight);        
 
             RoadRenderer.render(staticCtx, mapData, showLabels);
             LocationRenderer.render(staticCtx, mapData, true);

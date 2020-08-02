@@ -4,7 +4,7 @@ const INITIAL_STATE = {
     mapDataLoaded: false,
     averageUpdatesPerSecond: Number.POSITIVE_INFINITY,
     averageRendersPerSecond: Number.POSITIVE_INFINITY,
-    curMode: reduxConstants.APP_MODE_LIST.CREATE_MAP, //TO DO: change back to VIEW_MAP
+    curMode: reduxConstants.APP_MODE_LIST.VIEW_MAP,
     curBuildPointerType: reduxConstants.BUILD_POINTER_TYPE.NONE,
     selectedComponent: null,
     hoveredComponent: null,
@@ -17,7 +17,7 @@ const INITIAL_STATE = {
     showToggleDynamicLabels: true,
     showLowFpsWarning: false,
     shownLowFpsWarning: false,
-    showAboutModal: false, //TO DO: change back to true
+    showAboutModal: true,
     canvasDimensions: {
         width: 0,
         height: 0,
