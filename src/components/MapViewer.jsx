@@ -25,6 +25,7 @@ function MapViewer({
     mapDataLoaded,
     canvasOffset,
     buildActionHandler,
+    updateLocationName,
 }) {
     const containerRef = useRef(null);
 
@@ -95,7 +96,11 @@ function MapViewer({
                     }}
                 />
             )}
-            <Menu socket={socket} buildActionHandler={buildActionHandler} />
+            <Menu
+                socket={socket}
+                buildActionHandler={buildActionHandler}
+                updateLocationName={updateLocationName}
+            />
             <AboutModalButton />
             <div
                 onMouseMove={mouseMoveHandler}

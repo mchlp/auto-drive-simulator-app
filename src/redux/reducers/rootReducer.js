@@ -134,6 +134,10 @@ const rootReducer = (curState = INITIAL_STATE, action) => {
             return {
                 ...curState,
                 curMode: action.payload,
+                selectedComponent: null,
+                hoveredComponent: null,
+                mapDataLoaded:
+                    action.payload === reduxConstants.APP_MODE_LIST.CREATE_MAP,
             };
         case actionTypes.UPDATE_SELECTED_COMPONENT:
             return {

@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { reduxConstants } from '../redux/actions';
 import BuildSection from './MenuSections/BuildSection';
 
-function Menu({ socket, curMode, buildActionHandler }) {
+function Menu({ socket, curMode, buildActionHandler, updateLocationName }) {
     return (
         <div
             style={{
@@ -24,7 +24,7 @@ function Menu({ socket, curMode, buildActionHandler }) {
             }}
         >
             <MenuSection sectionName="Selected Component">
-                <SelectedDisplay />
+                <SelectedDisplay updateLocationName={updateLocationName} />
             </MenuSection>
             <MenuSection sectionName="Navigator">
                 {curMode === reduxConstants.APP_MODE_LIST.VIEW_MAP ? (

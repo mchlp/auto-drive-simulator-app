@@ -13,7 +13,6 @@ const POINTER_TYPE = {
     LOCATION: 'location',
     NONE: 'none',
     ROAD: 'road',
-    SAVE_MAP: 'save_map',
     DELETE: 'delete',
 };
 
@@ -30,7 +29,6 @@ function MapBuilder({
     const [roadStartWaypointId, setRoadStartWaypointId] = useState(null);
     const [roadType, setRoadType] = useState(null);
     const [curPointerType, setCurPointerType] = useState(POINTER_TYPE.NONE);
-    const [saveMapData, setSaveMapData] = useState('');
 
     useEffect(() => {
         console.log(curMode);
@@ -61,33 +59,49 @@ function MapBuilder({
                 nextIntersectionId = `intersection_${Utils.generateShortUuid()}`;
             }
             curPointerComponentId.current = nextIntersectionId;
-            MapDataHandler.updateMapData({
+            const newMapData = {
                 ...MapDataHandler.mapData,
                 intersections: {
                     ...MapDataHandler.mapData.intersections,
                     [nextIntersectionId]: {
+                        ...MapDataHandler.mapData.intersections[
+                            nextIntersectionId
+                        ],
                         id: nextIntersectionId,
                         coord: mapCoordinates,
                     },
                 },
-            });
+            };
+            MapDataHandler.updateMapData(newMapData);
         } else if (curPointerType === POINTER_TYPE.LOCATION) {
             let nextLocationId = curPointerComponentId.current;
+            let nextLocationName = null;
+            let newLocation = false;
+
             if (!nextLocationId || !nextLocationId.includes('location')) {
                 nextLocationId = `location_${Utils.generateShortUuid()}`;
+                nextLocationName = constants.getUniqueLocationName();
+                newLocation = true;
             }
             curPointerComponentId.current = nextLocationId;
 
-            MapDataHandler.updateMapData({
+            const newMapData = {
                 ...MapDataHandler.mapData,
                 locations: {
                     ...MapDataHandler.mapData.locations,
                     [nextLocationId]: {
-                        id: nextLocationId,
+                        ...MapDataHandler.mapData.locations[nextLocationId],
                         coord: mapCoordinates,
                     },
                 },
-            });
+            };
+
+            if (newLocation) {
+                newMapData.locations[nextLocationId].id = nextLocationId;
+                newMapData.locations[nextLocationId].name = nextLocationName;
+            }
+
+            MapDataHandler.updateMapData(newMapData);
         } else {
             MapDataHandler.updateMapData(prevSavedMapData.current);
             curPointerComponentId.current = null;
@@ -138,7 +152,7 @@ function MapBuilder({
 
     useEffect(() => {
         const interval = setInterval(() => {
-            localStorage.setItem('saved-map-data', getSerializedMap());
+            localStorage.setItem('saved-map-data', JSON.stringify(getSerializedMap()));
         }, 5000);
         return () => {
             clearInterval(interval);
@@ -153,12 +167,20 @@ function MapBuilder({
             vehicles: {},
             roads: prevSavedMapData.current.roads,
         };
-        return JSON.stringify(serializedMap);
+        return serializedMap;
     };
 
     const saveMap = () => {
-        setCurPointerType(POINTER_TYPE.SAVE_MAP);
-        setSaveMapData(getSerializedMap());
+        const serializedMap = getSerializedMap();
+        const dataExportStr =
+            'data:text/json;charset=utf-8,' +
+            encodeURIComponent(JSON.stringify(serializedMap));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute('href', dataExportStr);
+        downloadAnchorNode.setAttribute('download', serializedMap.id + '.json');
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
     };
 
     const deleteComponent = (deleteComponent) => {
@@ -260,16 +282,13 @@ function MapBuilder({
         }
     };
 
+    const updateLocationName = (locationId, newLocationName) => {
+        MapDataHandler.mapData.locations[locationId].name = newLocationName;
+        prevSavedMapData.current = MapDataHandler.mapData;
+    };
+
     return (
         <div className="mt-1">
-            {curPointerType === POINTER_TYPE.SAVE_MAP && (
-                <Alert className="mt-2">
-                    <div className="mb-2">
-                        Copy the map data below to your clipboard.
-                    </div>
-                    <Input type="text" value={saveMapData} readOnly={true} />
-                </Alert>
-            )}
             <div>
                 <MapViewer
                     onMouseMove={mouseMoveHandler}
@@ -278,6 +297,7 @@ function MapBuilder({
                     curPointerComponentId={curPointerComponentId.current}
                     cursorStyle={cursorStyle}
                     buildActionHandler={buildActionHandler}
+                    updateLocationName={updateLocationName}
                 />
             </div>
         </div>

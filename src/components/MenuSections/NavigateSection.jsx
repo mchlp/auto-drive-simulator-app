@@ -5,6 +5,7 @@ import MapDataHandler from '../../utils/MapDataHandler';
 import { connect } from 'react-redux';
 
 function NavigateSection({
+    curMode,
     curTripVehicleId,
     mapDataLoaded,
     socket,
@@ -69,7 +70,14 @@ function NavigateSection({
     };
 
     let Content;
-    if (
+    if (curMode === reduxConstants.APP_MODE_LIST.CREATE_MAP) {
+        Content = (
+            <div>
+                Starting a trip is not allowed when building a map. Switch to
+                View Mode to start a trip.
+            </div>
+        );
+    } else if (
         curTripVehicleId &&
         curTripVehicleId !== reduxConstants.COMPLETED_TRIP_VEHICLE_ID &&
         curTripVehicleData
@@ -247,6 +255,7 @@ const mapStateToProps = (state) => ({
     mapDataLoaded: state.mapDataLoaded,
     curTripVehicleId: state.curTripVehicleId,
     followCurTripVehicle: state.followCurTripVehicle,
+    curMode: state.curMode,
 });
 
 export default connect(mapStateToProps)(NavigateSection);
