@@ -22,18 +22,28 @@ function Map({
 
     useEffect(() => {
         dispatch(
-            actionCreators.setCanvasDimensions({
-                height: window.innerHeight,
-                width: window.innerWidth,
-            })
-        );
-        dispatch(
             actionCreators.setCanvasProps({
                 centerX: 0,
                 centerY: 0,
                 zoom: 0.5,
             })
         );
+
+        const onWindowResize = () => {
+            dispatch(
+                actionCreators.setCanvasDimensions({
+                    height: window.innerHeight,
+                    width: window.innerWidth,
+                })
+            );
+        };
+
+        onWindowResize();
+        window.addEventListener('resize', onWindowResize);
+
+        return () => {
+            window.removeEventListener('resize', onWindowResize);
+        };
     }, [dispatch]);
 
     const dragging = useRef(false);
@@ -237,6 +247,7 @@ function Map({
                 top: 0,
                 left: 0,
                 zIndex: -1,
+                overflow: 'hidden',
             }}
         >
             {mapLoaded ? (

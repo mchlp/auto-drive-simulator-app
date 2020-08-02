@@ -44,7 +44,7 @@ function MapSettings({
                                 fontSize: 10,
                             }}
                         >
-                            Toggle Vehicle Labels
+                            Show Vehicle Labels
                         </label>
                     </div>
                 )}
