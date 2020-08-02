@@ -8,7 +8,16 @@ import { connect } from 'react-redux';
 import { reduxConstants } from '../redux/actions';
 import BuildSection from './MenuSections/BuildSection';
 
-function Menu({ socket, curMode, buildActionHandler, updateLocationName }) {
+function Menu({
+    socket,
+    curMode,
+    buildActionHandler,
+    updateLocationName,
+    mapDataLoaded,
+}) {
+    if (!mapDataLoaded) {
+        return null;
+    }
     return (
         <div
             style={{
@@ -50,7 +59,7 @@ function Menu({ socket, curMode, buildActionHandler, updateLocationName }) {
 }
 
 const mapStateToProps = (state) => {
-    return { curMode: state.curMode };
+    return { curMode: state.curMode, mapDataLoaded: state.mapDataLoaded };
 };
 
 export default connect(mapStateToProps)(Menu);
