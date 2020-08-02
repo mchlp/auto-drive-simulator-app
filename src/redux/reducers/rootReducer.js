@@ -1,10 +1,11 @@
-import { reduxConstants, actionTypes } from '../actions';
+import { reduxConstants, actionTypes, actionCreators } from '../actions';
 
 const INITIAL_STATE = {
     mapDataLoaded: false,
     averageUpdatesPerSecond: Number.POSITIVE_INFINITY,
     averageRendersPerSecond: Number.POSITIVE_INFINITY,
-    curMode: reduxConstants.APP_MODE_LIST.VIEW_MAP,
+    curMode: reduxConstants.APP_MODE_LIST.CREATE_MAP, //TO DO: change back to VIEW_MAP
+    curBuildPointerType: reduxConstants.BUILD_POINTER_TYPE.NONE,
     selectedComponent: null,
     hoveredComponent: null,
     showLabels: {
@@ -16,7 +17,7 @@ const INITIAL_STATE = {
     showToggleDynamicLabels: true,
     showLowFpsWarning: false,
     shownLowFpsWarning: false,
-    showAboutModal: true,
+    showAboutModal: false, //TO DO: change back to true
     canvasDimensions: {
         width: 0,
         height: 0,
@@ -34,6 +35,12 @@ const INITIAL_STATE = {
 
 const rootReducer = (curState = INITIAL_STATE, action) => {
     switch (action.type) {
+        case actionTypes.UPDATE_CUR_BUILD_POINTER_TYPE: {
+            return {
+                ...curState,
+                curBuildPointerType: action.payload,
+            };
+        }
         case actionTypes.UPDATE_SHOW_ABOUT_MODAL: {
             return {
                 ...curState,

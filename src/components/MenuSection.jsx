@@ -21,7 +21,7 @@ export default function MenuSection({
     }
 
     return (
-        <div className="mx-2 my-2">
+        <div className="mx-2 my-1">
             <div
                 className="font-weight-bold"
                 style={{

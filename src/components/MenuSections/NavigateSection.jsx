@@ -159,10 +159,7 @@ function NavigateSection({
                     {curTripVehicleId ===
                         reduxConstants.COMPLETED_TRIP_VEHICLE_ID && (
                         <Alert
-                            className="mb-1 mt-2 p-2"
-                            style={{
-                                textAlign: 'center',
-                            }}
+                            className="mb-1 mt-2 p-2"                            
                             color="success"
                         >
                             <div className="font-weight-bold">

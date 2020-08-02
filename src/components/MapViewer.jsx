@@ -70,10 +70,11 @@ function MapViewer({
 
     const mouseDownHandler = (event) => {
         if (containerRef && containerRef.current) {
+            event.preventDefault();
             const mapCoordinates = getMapCoordinatesFromMouseEvent(event);
 
             if (onMouseDown) {
-                onMouseDown(mapCoordinates);
+                onMouseDown(mapCoordinates, event.button);
             }
 
             if (
@@ -105,6 +106,10 @@ function MapViewer({
             <div
                 onMouseMove={mouseMoveHandler}
                 onMouseDown={mouseDownHandler}
+                onContextMenu={(event) => {
+                    event.preventDefault();
+                    return false;
+                }}
                 ref={containerRef}
                 style={{
                     cursor: cursorStyle

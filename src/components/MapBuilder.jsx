@@ -8,17 +8,10 @@ import { actionCreators, reduxConstants } from '../redux/actions';
 import { connect } from 'react-redux';
 import MapDataHandler from '../utils/MapDataHandler';
 
-const POINTER_TYPE = {
-    INTERSECTION: 'intersection',
-    LOCATION: 'location',
-    NONE: 'none',
-    ROAD: 'road',
-    DELETE: 'delete',
-};
-
 function MapBuilder({
     dispatch,
     curMode,
+    curBuildPointerType,
     selectedComponent,
     hoveredComponent,
 }) {
@@ -28,7 +21,6 @@ function MapBuilder({
     const curPointerComponentId = useRef(null);
     const [roadStartWaypointId, setRoadStartWaypointId] = useState(null);
     const [roadType, setRoadType] = useState(null);
-    const [curPointerType, setCurPointerType] = useState(POINTER_TYPE.NONE);
 
     useEffect(() => {
         console.log(curMode);
@@ -37,7 +29,11 @@ function MapBuilder({
 
     const keyDownHandler = (event) => {
         if (event.key === 'Escape') {
-            setCurPointerType(POINTER_TYPE.NONE);
+            dispatch(
+                actionCreators.setCurBuildPointerType(
+                    reduxConstants.BUILD_POINTER_TYPE.NONE
+                )
+            );
             curPointerComponentId.current = null;
         }
     };
@@ -50,7 +46,10 @@ function MapBuilder({
     }, []);
 
     const mouseMoveHandler = (mapCoordinates) => {
-        if (curPointerType === POINTER_TYPE.INTERSECTION) {
+        if (
+            curBuildPointerType ===
+            reduxConstants.BUILD_POINTER_TYPE.INTERSECTION
+        ) {
             let nextIntersectionId = curPointerComponentId.current;
             if (
                 !nextIntersectionId ||
@@ -73,7 +72,9 @@ function MapBuilder({
                 },
             };
             MapDataHandler.updateMapData(newMapData);
-        } else if (curPointerType === POINTER_TYPE.LOCATION) {
+        } else if (
+            curBuildPointerType === reduxConstants.BUILD_POINTER_TYPE.LOCATION
+        ) {
             let nextLocationId = curPointerComponentId.current;
             let nextLocationName = null;
             let newLocation = false;
@@ -108,51 +109,64 @@ function MapBuilder({
         }
     };
 
-    const mouseDownHandler = (mapCoordinates) => {
-        if (
-            curPointerType === POINTER_TYPE.INTERSECTION ||
-            curPointerType === POINTER_TYPE.LOCATION
-        ) {
-            if (!hoveredComponent) {
-                prevSavedMapData.current = MapDataHandler.mapData;
-                curPointerComponentId.current = null;
-            }
-        } else if (curPointerType === POINTER_TYPE.ROAD) {
-            if (hoveredComponent) {
-                if (!roadStartWaypointId) {
-                    // road start point
-                    setRoadStartWaypointId(hoveredComponent.id);
-                } else {
-                    // road end point
-                    const nextRoadId = `road_${Utils.generateShortUuid()}`;
+    const mouseDownHandler = (mapCoordinates, eventButton) => {
+        if (eventButton === 0) {
+            if (
+                curBuildPointerType ===
+                    reduxConstants.BUILD_POINTER_TYPE.INTERSECTION ||
+                curBuildPointerType ===
+                    reduxConstants.BUILD_POINTER_TYPE.LOCATION
+            ) {
+                if (!hoveredComponent) {
+                    prevSavedMapData.current = MapDataHandler.mapData;
+                    curPointerComponentId.current = null;
+                }
+            } else if (
+                curBuildPointerType.includes(reduxConstants.BUILD_POINTER_TYPE.ROAD_SUFFIX)
+            ) {
+                if (hoveredComponent) {
+                    if (!roadStartWaypointId) {
+                        // road start point
+                        setRoadStartWaypointId(hoveredComponent.id);
+                    } else {
+                        // road end point
+                        const nextRoadId = `road_${Utils.generateShortUuid()}`;
 
-                    const newMapData = {
-                        ...prevSavedMapData.current,
-                        roads: {
-                            ...prevSavedMapData.current.roads,
-                            [nextRoadId]: {
-                                id: nextRoadId,
-                                type: roadType,
-                                start: roadStartWaypointId,
-                                end: hoveredComponent.id,
+                        const newMapData = {
+                            ...prevSavedMapData.current,
+                            roads: {
+                                ...prevSavedMapData.current.roads,
+                                [nextRoadId]: {
+                                    id: nextRoadId,
+                                    type: roadType,
+                                    start: roadStartWaypointId,
+                                    end: hoveredComponent.id,
+                                },
                             },
-                        },
-                    };
-                    prevSavedMapData.current = newMapData;
-                    MapDataHandler.updateMapData(newMapData);
-                    setRoadStartWaypointId(hoveredComponent.id);
+                        };
+                        prevSavedMapData.current = newMapData;
+                        MapDataHandler.updateMapData(newMapData);
+                        setRoadStartWaypointId(hoveredComponent.id);
+                    }
+                }
+            } else if (
+                curBuildPointerType === reduxConstants.BUILD_POINTER_TYPE.DELETE
+            ) {
+                if (hoveredComponent) {
+                    deleteComponent(hoveredComponent);
                 }
             }
-        } else if (curPointerType === POINTER_TYPE.DELETE) {
-            if (hoveredComponent) {
-                deleteComponent(hoveredComponent);
-            }
+        } else if (eventButton === 2) {
+            buildActionHandler(reduxConstants.BUILD_ACTIONS.RESET_POINTER);
         }
     };
 
     useEffect(() => {
         const interval = setInterval(() => {
-            localStorage.setItem('saved-map-data', JSON.stringify(getSerializedMap()));
+            localStorage.setItem(
+                'saved-map-data',
+                JSON.stringify(getSerializedMap())
+            );
         }, 5000);
         return () => {
             clearInterval(interval);
@@ -215,16 +229,23 @@ function MapBuilder({
     };
 
     let curPointerRadius = 0;
-    if (curPointerType === POINTER_TYPE.LOCATION) {
+    if (curBuildPointerType === reduxConstants.BUILD_POINTER_TYPE.LOCATION) {
         curPointerRadius = constants.DISPLAY.LOCATION_RADIUS;
-    } else if (curPointerType === POINTER_TYPE.INTERSECTION) {
+    } else if (
+        curBuildPointerType === reduxConstants.BUILD_POINTER_TYPE.INTERSECTION
+    ) {
         curPointerRadius = constants.DISPLAY.INTERSECTION_RADIUS;
     }
 
     let cursorStyle = null;
-    if (curPointerType === POINTER_TYPE.ROAD && roadStartWaypointId) {
+    if (
+        curBuildPointerType.includes(reduxConstants.BUILD_POINTER_TYPE.ROAD_SUFFIX) &&
+        roadStartWaypointId
+    ) {
         cursorStyle = 'crosshair';
-    } else if (curPointerType === POINTER_TYPE.DELETE) {
+    } else if (
+        curBuildPointerType === reduxConstants.BUILD_POINTER_TYPE.DELETE
+    ) {
         cursorStyle = 'no-drop';
     }
 
@@ -232,44 +253,72 @@ function MapBuilder({
         switch (buildAction) {
             case reduxConstants.BUILD_ACTIONS.ADD_LOCATION: {
                 MapDataHandler.updateMapData(prevSavedMapData.current);
-                setCurPointerType(POINTER_TYPE.LOCATION);
+                dispatch(
+                    actionCreators.setCurBuildPointerType(
+                        reduxConstants.BUILD_POINTER_TYPE.LOCATION
+                    )
+                );
                 curPointerComponentId.current = null;
                 break;
             }
             case reduxConstants.BUILD_ACTIONS.ADD_INTERSECTION: {
                 MapDataHandler.updateMapData(prevSavedMapData.current);
-                setCurPointerType(POINTER_TYPE.INTERSECTION);
+                dispatch(
+                    actionCreators.setCurBuildPointerType(
+                        reduxConstants.BUILD_POINTER_TYPE.INTERSECTION
+                    )
+                );
                 curPointerComponentId.current = null;
                 break;
             }
             case reduxConstants.BUILD_ACTIONS.BUILD_MAJOR_ROAD: {
                 MapDataHandler.updateMapData(prevSavedMapData.current);
-                setCurPointerType(POINTER_TYPE.ROAD);
+                dispatch(
+                    actionCreators.setCurBuildPointerType(
+                        reduxConstants.BUILD_POINTER_TYPE.MAJOR_ROAD
+                    )
+                );
                 setRoadType(constants.ROAD_TYPES.TYPES.MAJOR);
                 break;
             }
             case reduxConstants.BUILD_ACTIONS.BUILD_MINOR_ROAD: {
                 MapDataHandler.updateMapData(prevSavedMapData.current);
-                setCurPointerType(POINTER_TYPE.ROAD);
+                dispatch(
+                    actionCreators.setCurBuildPointerType(
+                        reduxConstants.BUILD_POINTER_TYPE.MINOR_ROAD
+                    )
+                );
                 setRoadType(constants.ROAD_TYPES.TYPES.MINOR);
                 break;
             }
             case reduxConstants.BUILD_ACTIONS.BUILD_LOCAL_ROAD: {
                 MapDataHandler.updateMapData(prevSavedMapData.current);
-                setCurPointerType(POINTER_TYPE.ROAD);
+                dispatch(
+                    actionCreators.setCurBuildPointerType(
+                        reduxConstants.BUILD_POINTER_TYPE.LOCAL_ROAD
+                    )
+                );
                 setRoadType(constants.ROAD_TYPES.TYPES.LOCAL);
                 break;
             }
             case reduxConstants.BUILD_ACTIONS.DELETE_COMPONENTS: {
                 MapDataHandler.updateMapData(prevSavedMapData.current);
-                setCurPointerType(POINTER_TYPE.DELETE);
+                dispatch(
+                    actionCreators.setCurBuildPointerType(
+                        reduxConstants.BUILD_POINTER_TYPE.DELETE
+                    )
+                );
                 curPointerComponentId.current = null;
                 break;
             }
             case reduxConstants.BUILD_ACTIONS.RESET_POINTER: {
                 setRoadStartWaypointId(null);
                 MapDataHandler.updateMapData(prevSavedMapData.current);
-                setCurPointerType(POINTER_TYPE.NONE);
+                dispatch(
+                    actionCreators.setCurBuildPointerType(
+                        reduxConstants.BUILD_POINTER_TYPE.NONE
+                    )
+                );
                 curPointerComponentId.current = null;
                 break;
             }
@@ -309,6 +358,7 @@ const mapStateToProps = (state) => {
         curMode: state.curMode,
         selectedComponent: state.selectedComponent,
         hoveredComponent: state.hoveredComponent,
+        curBuildPointerType: state.curBuildPointerType,
     };
 };
 

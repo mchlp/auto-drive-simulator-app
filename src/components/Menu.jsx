@@ -26,7 +26,13 @@ function Menu({ socket, curMode, buildActionHandler, updateLocationName }) {
             <MenuSection sectionName="Selected Component">
                 <SelectedDisplay updateLocationName={updateLocationName} />
             </MenuSection>
-            <MenuSection sectionName="Navigator">
+            <MenuSection
+                sectionName={
+                    curMode === reduxConstants.APP_MODE_LIST.CREATE_MAP
+                        ? 'Build Controls'
+                        : 'Navigator'
+                }
+            >
                 {curMode === reduxConstants.APP_MODE_LIST.VIEW_MAP ? (
                     <NavigateSection socket={socket} />
                 ) : (

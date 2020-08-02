@@ -17,11 +17,23 @@ reduxConstants.BUILD_ACTIONS = {
     SAVE_MAP: 'SAVE_MAP',
 };
 
+reduxConstants.BUILD_POINTER_TYPE = {
+    INTERSECTION: 'intersection',
+    LOCATION: 'location',
+    NONE: 'none',
+    ROAD_SUFFIX: '_road',
+    MAJOR_ROAD: 'major_road',
+    MINOR_ROAD: 'minor_road',
+    LOCAL_ROAD: 'local_road',
+    DELETE: 'delete',
+};
+
 const actionTypes = {
     UPDATE_MAP_DATA_LOADED: 'UPDATE_MAP_DATA_LOADED',
     UPDATE_AVERAGE_RENDERS_PER_SECOND: 'UPDATE_AVERAGE_RENDERS_PER_SECOND',
     UPDATE_AVERAGE_UPDATES_PER_SECOND: 'UPDATE_AVERAGE_UPDATES_PER_SECOND',
     UPDATE_CUR_MODE: 'UPDATE_CUR_MODE',
+    UPDATE_CUR_BUILD_POINTER_TYPE: 'UPDATE_CUR_BUILD_POINTER_TYPE',
     UPDATE_SELECTED_COMPONENT: 'UPDATE_SELECTED_COMPONENT',
     UPDATE_HOVERED_COMPONENT: 'UPDATE_HOVERED_COMPONENT',
     UPDATE_SHOW_DYNAMIC_LABELS: 'UPDATE_SHOW_DYNAMIC_LABELS',
@@ -39,6 +51,11 @@ const actionTypes = {
 };
 
 const actionCreators = {};
+
+actionCreators.setCurBuildPointerType = (buildPointerType) => ({
+    type: actionTypes.UPDATE_CUR_BUILD_POINTER_TYPE,
+    payload: buildPointerType,
+});
 
 actionCreators.setShowAboutModal = (showAboutModal) => ({
     type: actionTypes.UPDATE_SHOW_ABOUT_MODAL,
