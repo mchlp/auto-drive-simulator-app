@@ -8,4 +8,4 @@
 
 Built using Create React App.
 
-[Link to Backend Repo](https://mchlp.github.io/auto-drive-simulator-api/)
+[Link to Backend Repo](https://github.com/mchlp/auto-drive-simulator-api)
