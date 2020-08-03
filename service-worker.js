@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/auto-drive-simulator-app/precache-manifest.bd734ba01e0b54ef87febbff866100d9.js"
+  "/auto-drive-simulator-app/precache-manifest.5d176e017f59b3201d3d370f889d9711.js"
 );
 
 self.addEventListener('message', (event) => {
