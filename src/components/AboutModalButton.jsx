@@ -79,13 +79,34 @@ function AboutModalButton({ showAboutModal, dispatch }) {
                     setIsOpen(!isOpen);
                 }}
             >
-                <img
-                    src={process.env.PUBLIC_URL + '/logo512.png'}
-                    alt="App logo"
-                    height={30}
-                    className="mr-3"
-                />
-                About Auto Drive Simulator
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        alignContent: 'center',
+                    }}
+                >
+                    <img
+                        src={process.env.PUBLIC_URL + '/logo512.png'}
+                        alt="App logo"
+                        height={30}
+                        className="mr-3"
+                    />
+                    <div>
+                        <div>About Auto Drive Simulator</div>
+                        <div
+                            style={{
+                                fontSize: 11,
+                                color: 'grey',
+                                textAlign: 'center',
+                            }}
+                        >
+                            This about pop-up can be accessed again by clicking{' '}
+                            <FaQuestionCircle size={13} /> in the top right.
+                        </div>
+                    </div>
+                </div>
             </ModalHeader>
             <ModalBody>
                 <div>
@@ -337,24 +358,21 @@ function AboutModalButton({ showAboutModal, dispatch }) {
 
     return (
         <div>
-            {showAboutModal ? (
-                AboutModal
-            ) : (
-                <div
-                    style={{
-                        margin: 5,
-                        position: 'fixed',
-                        right: 0,
-                        top: 0,
-                        cursor: 'pointer',
-                    }}
-                    onClick={() => {
-                        setIsOpen(true);
-                    }}
-                >
-                    <FaQuestionCircle size={25} />
-                </div>
-            )}
+            {showAboutModal && AboutModal}
+            <div
+                style={{
+                    margin: 5,
+                    position: 'fixed',
+                    right: 0,
+                    top: 0,
+                    cursor: 'pointer',
+                }}
+                onClick={() => {
+                    setIsOpen(true);
+                }}
+            >
+                <FaQuestionCircle size={25} />
+            </div>
         </div>
     );
 }
