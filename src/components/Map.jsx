@@ -295,7 +295,7 @@ function Map({
                         <div className="mb-2">
                             <Spinner type="grow" color="primary" size="m" />
                         </div>
-                        <div>Conneting to server...</div>
+                        <div>Connecting to server...</div>
                         <div>This may take a minute while the server starts.</div>
                     </div>
                 </div>
