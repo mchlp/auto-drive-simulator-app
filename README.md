@@ -1,5 +1,5 @@
 # Auto Drive Simulator - Frontend
-*A web app to simulate a city of fully autonmous driving vehicles.*
+*A web app to simulate a city of fully autonomous driving vehicles.*
 
 [Try it out!](https://mchlp.github.io/auto-drive-simulator-app/)
 
