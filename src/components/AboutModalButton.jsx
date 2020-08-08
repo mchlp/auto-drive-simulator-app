@@ -118,7 +118,7 @@ function AboutModalButton({ showAboutModal, dispatch }) {
                                 color: 'grey',
                             }}
                         >
-                            A web app to simulate a city of fully autonmous
+                            A web app to simulate a city of fully autonomous
                             driving vehicles.
                         </div>
                         <div
@@ -199,12 +199,12 @@ function AboutModalButton({ showAboutModal, dispatch }) {
                                 componentName="Major Road"
                                 componentDesc={
                                     <div>
-                                        A major road is intented to handle
+                                        A major road is intended to handle
                                         heavier volumes of traffic and vehicles
-                                        are able to travel at the highest speed
-                                        on these roads. Generally, these roads
-                                        will be preferred over other road types
-                                        when vehicles are calculating a route.
+                                        can travel at the highest speed on these
+                                        roads. Generally, these roads will be
+                                        preferred over other road types when
+                                        vehicles are calculating a route.
                                     </div>
                                 }
                             />
@@ -214,11 +214,11 @@ function AboutModalButton({ showAboutModal, dispatch }) {
                                 componentName="Minor Road"
                                 componentDesc={
                                     <div>
-                                        A minor road is intented to handle
+                                        A minor road is intended to handle
                                         medium volumes of traffic and vehicles
-                                        are able to travel at a medium speed on
-                                        these roads. Generally, these roads are
-                                        given the second-highest preference when
+                                        can travel at a medium speed on these
+                                        roads. Generally, these roads are given
+                                        the second-highest preference when
                                         vehicles are calculating a route.
                                     </div>
                                 }
@@ -229,9 +229,9 @@ function AboutModalButton({ showAboutModal, dispatch }) {
                                 componentName="Local Road"
                                 componentDesc={
                                     <div>
-                                        A local road is intented to handle low
+                                        A local road is intended to handle low
                                         volumes of traffic and vehicles travel
-                                        the sloweest on these roads. These
+                                        the slowest on these roads. These
                                         usually connect locations to major or
                                         minor roads.
                                     </div>
@@ -266,9 +266,9 @@ function AboutModalButton({ showAboutModal, dispatch }) {
                                 fontSize: 12,
                             }}
                         >
-                            There is a map building tool which can be accessed
+                            There is a map building tool that can be accessed
                             by clicking on the{' '}
-                            <code>Switch to Create Mode</code> button in the
+                            <code>Switch to Create Mode</code> button on the
                             side menu. This will take you to a screen where you
                             can build your own map and download it in JSON
                             format.
