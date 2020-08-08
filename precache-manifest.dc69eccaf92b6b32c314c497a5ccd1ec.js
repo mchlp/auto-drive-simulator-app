@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "cabca7a321605d07b00140b2ad3093ed",
+    "revision": "b74e250e7a2d5bd55d3b3e81256ffa72",
     "url": "/auto-drive-simulator-app/index.html"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/auto-drive-simulator-app/static/js/2.83b16368.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "290a8a892c0676a3419f",
-    "url": "/auto-drive-simulator-app/static/js/main.8add1208.chunk.js"
+    "revision": "d00a29e0918f6c871fc5",
+    "url": "/auto-drive-simulator-app/static/js/main.fdd353fa.chunk.js"
   },
   {
     "revision": "3b6bbd02cdd208675877",
