@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b74e250e7a2d5bd55d3b3e81256ffa72",
+    "revision": "66dbfe3df948b00ff76118b96006de69",
     "url": "/auto-drive-simulator-app/index.html"
   },
   {
