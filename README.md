@@ -3,8 +3,14 @@
 
 [Try it out!](https://mchlp.github.io/auto-drive-simulator-app/)
 
+**Overall Demo Video**
+[![Overall Demo Video](./demo/auto-drive-demo-overall.jpg)](./demo/auto-drive-demo-overall.mp4)
 
-![Screenshot of Auto Drive Simulator](./public/screenshot.png)
+**Navigation Demo Video**
+[![Navigation Demo Video](./demo/auto-drive-demo-navigate.jpg)](./demo/auto-drive-demo-navigate.mp4)
+
+**Create Map Demo Video**
+[![Create Map Demo Video](./demo/auto-drive-demo-create.jpg)](./demo/auto-drive-demo-create.mp4)
 
 Built using Create React App.
 
